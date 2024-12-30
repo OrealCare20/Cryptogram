@@ -34,6 +34,10 @@ local.properties
 *.keystore
 !debug.keystore
 
+# Ignore APK files and build outputs
+app/build/
+*.apk
+
 # node.js
 #
 node_modules/
@@ -62,7 +66,7 @@ yarn-error.log
 # Temporary files created by Metro to check the health of the file watcher
 .metro-health-check*
 
-# testing
+# Testing
 /coverage
 
 # Yarn
