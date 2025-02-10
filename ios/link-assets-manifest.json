@@ -2,8 +2,16 @@
   "migIndex": 1,
   "data": [
     {
+      "path": "assets/fonts/BakbakOne-Regular.ttf",
+      "sha1": "e7d3d32f7058aa37df132df235f8e336d964f667"
+    },
+    {
+      "path": "assets/fonts/Inter_24pt-SemiBold.ttf",
+      "sha1": "ee81756dc9685877077aae9027708aa84bc56027"
+    },
+    {
       "path": "assets/fonts/LICENSE.txt",
-      "sha1": "47b573e3824cd5e02a1a3ae99e2735b49e0256e4"
+      "sha1": "2b8b815229aa8a61e483fb4ba0588b8b6c491890"
     },
     {
       "path": "assets/fonts/Roboto-Black.ttf",
@@ -52,6 +60,14 @@
     {
       "path": "assets/fonts/Roboto-ThinItalic.ttf",
       "sha1": "6a08d5ff3989d2b4a8e960ca0e88e7e0ff104708"
+    },
+    {
+      "path": "assets/fonts/Supercell-Magic Regular.ttf",
+      "sha1": "60742d559eb5124ce1873e5e9ce5f40f11e07c50"
+    },
+    {
+      "path": "assets/fonts/supercell-magic.ttf",
+      "sha1": "4edb868344b2d88a759a7d1b43fb22048d445541"
     }
   ]
 }
