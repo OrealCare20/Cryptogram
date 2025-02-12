@@ -3,6 +3,24 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import moment from 'moment';
 
 
+//  FIREBASE CREDENTIALS
+export const firebaseConfig = {
+    apiKey: "AIzaSyDJcrUTf2nkIx33INiBtpvSDVDEkCm0mmE",
+    authDomain: "cryptogram-letter-puzzle.firebaseapp.com",
+    projectId: "cryptogram-letter-puzzle",
+    storageBucket: "cryptogram-letter-puzzle.firebasestorage.app",
+    messagingSenderId: "811440145032",
+    appId: "1:811440145032:android:d1faf4daeb5b6a38e8553d",
+    measurementId: ""
+  };
+
+
+// TEST AD ID
+// export const BANNER_AD = 'ca-app-pub-3940256099942544/9214589741';
+// export const COIN_REWARD = 'ca-app-pub-3940256099942544/5354046379';
+// export const HINT_REWARD = 'ca-app-pub-3940256099942544/5354046379';
+// export const RESUME_REWARD = 'ca-app-pub-3940256099942544/5224354917';
+// LIVE AD ID'S
 export const BANNER_AD = 'ca-app-pub-3781511156022357/9088003632';
 export const COIN_REWARD = 'ca-app-pub-3781511156022357/5648587543';
 export const HINT_REWARD = 'ca-app-pub-3781511156022357/4746569410';
@@ -92,7 +110,7 @@ export const first_try_win = async () => {
 }
 
 export const get_all_stats_data = async () => {
-    let data = { first_try_win: null, letter_solved: null, word_solved: null, level_completed: 0, level_durations: null, days_completed: [] };
+    let data = { first_try_win: 0, letter_solved: 0, word_solved: 0, level_completed: 0, level_durations: null, days_completed: [] };
 
     let first_try_win = await get_async_data('first_try_win');
     let letter_solved = await get_async_data('letter_solved');

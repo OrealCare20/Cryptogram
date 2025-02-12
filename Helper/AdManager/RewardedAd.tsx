@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useRewardedAd, useRewardedInterstitialAd } from 'react-native-google-mobile-ads';
+import { useRewardedAd } from 'react-native-google-mobile-ads';
 import { add_life, set_async_data } from '../AppHelper';
 
 export default function RewardedAd(props: any) {
@@ -13,19 +13,19 @@ export default function RewardedAd(props: any) {
   );
 
   useEffect(() => {
-    console.log('Loading Rewarded Interstitial Ad');
+    console.log('Loading Rewarded Ad');
     load();
   }, [load]);
   
   useEffect(() => {
-    console.log('Rewarded Interstitial Ad error', error);
+    console.log('Rewarded Ad error', error);
     // load();
   }, [error]);
 
   useEffect(() => {
     (async () => {
       if (error) {
-        console.log('Rewarded Intertitial Ad error', error);
+        console.log('Rewarded Ad error', error);
         seterrorStatus(true);
         props.sethintAd(false);
         props.setrewardad(false);

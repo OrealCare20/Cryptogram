@@ -101,10 +101,10 @@ const AppTour = ({navigation}) => {
             } else {
                 const letterElement = (
                     <View onTouchEnd={() => { item.id == 3 && click == 1 ? setclick(click + 1) : null }} style={styles.letterContainer} key={`letter-${index}`}>
-                        <Text onPress={() => handlePress(item)} style={getLetterStyle(item)}>
+                        <Text onPress={() => handlePress(item)} style={[getLetterStyle(item), {color: '#000'}]}>
                             {item.show || (focusId === item.id && letterpressed) ? item.letter : ''}
                         </Text>
-                        <Text style={styles.number}>{item.number}</Text>
+                        <Text style={{color: '#000', textAlign: 'center'}}>{item.number}</Text>
                         {/* pointer arrow shows here... */}
                         {item.id == 3 && click == 1 ? (<Image style={styles.pointingGif} source={require('../../assets/images/giphy.gif')} />) : null}
                     </View>

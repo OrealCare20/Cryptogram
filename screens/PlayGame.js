@@ -9,6 +9,7 @@ import {
     Dimensions,
     ActivityIndicator
 } from 'react-native';
+import analytics from '@react-native-firebase/analytics';
 import { useNetInfo } from "@react-native-community/netinfo";
 import { trigger } from "react-native-haptic-feedback";
 import SystemNavigationBar from 'react-native-system-navigation-bar';
@@ -25,6 +26,7 @@ import { BannerAd, BannerAdSize } from 'react-native-google-mobile-ads';
 import HintRewardedAd from '../Helper/AdManager/HintRewardedAd';
 import Ibutton from '../components/Ibuton';
 import CommigSoon from '../components/CommingSoon';
+import InterstitialFlooring from '../Helper/AdManager/InterstitialFlooring';
 
 const { width, height } = Dimensions.get('screen');
 
@@ -93,15 +95,16 @@ export default function PlayGame({ navigation }) {
     SystemNavigationBar.immersive();
 
     useEffect(() => {
-        // console.log('RESTART USEEFFECT CALLED -> VALUE IS : ', restart);
+        // console.log('RESTART USEEFFECT CALLED -> VALUE IS : ', restart, round);
         (async () => {
             if (restart == false) {
                 const fetchRoundData = async () => {
                     let current_time = moment().format('YYYY-MM-DD HH:mm:ss');
                     await set_async_data('start_time', current_time);
                     let round = await get_async_data('round');
-                    setRound(round); // update round state
-
+                    console.log(`Current Round ${round}`);
+                    // setRound(round); // update round state
+                    setData(puzzleData[round])
                     let hint = await get_async_data('hints');
                     // console.log('available HINTS ', hint)
                     if (hint != null || hint != undefined) {
@@ -124,6 +127,7 @@ export default function PlayGame({ navigation }) {
             let current_time = moment().format('YYYY-MM-DD HH:mm:ss');
             await set_async_data('start_time', current_time);
             let round = await get_async_data('round');
+            await analytics().logEvent(`Round_${round}`);
             if (round == 'round_17') {
                 await set_async_data('round', 'round_1');
                 setRound('round_1');
@@ -142,46 +146,39 @@ export default function PlayGame({ navigation }) {
 
     // Update phrase when round changes
     useEffect(() => {
-        if (round) {
-            // console.log('ROUND CHANGED-----------------------------');
-            const updatedPhrase = puzzleData[round];
-            let disabledCharacters = getUnusedVisibleLetters(updatedPhrase);
-            let repeatedHiddenAlphabet = getRepeatedHiddenAlphabets(updatedPhrase);
-
-
-            // console.log(`DISABLE LETTER ${disabledCharacters} -->> ${disabledCharacters.includes('A')}`);
-
-            let newKeyboard = rows.map((row, rowIndex) =>
-                row.map((key, keyIndex) => {
-                    const isDisabled = disabledCharacters.includes(key.letter);
-                    // console.log(`Row ${rowIndex}, Key ${keyIndex}: Letter ${key.letter}, isDisabled: ${isDisabled}`);
-                    return {
+        (async ()=> {
+            let round = await get_async_data('round');
+            if (round) {
+                // console.log('ROUND CHANGED-----------------------------', round);
+                const updatedPhrase = puzzleData[round];
+                let disabledCharacters = getUnusedVisibleLetters(updatedPhrase);
+                let repeatedHiddenAlphabet = getRepeatedHiddenAlphabets(updatedPhrase);
+    
+                let newKeyboard = rows.map((row, rowIndex) =>
+                    row.map((key, keyIndex) => {
+                        const isDisabled = disabledCharacters.includes(key.letter);
+                        return {
+                            ...key,
+                            isActive: !isDisabled, // If the letter is not in disabledCharacters, isActive = true
+                        };
+                    })
+                );
+        
+    
+                newKeyboard = newKeyboard.map(row =>
+                    row.map(key => ({
                         ...key,
-                        isActive: !isDisabled, // If the letter is not in disabledCharacters, isActive = true
-                    };
-                })
-            );
-
-
-
-
-            newKeyboard = newKeyboard.map(row =>
-                row.map(key => ({
-                    ...key,
-                    //  isActive: repeatedHiddenAlphabet.includes(key.letter) ? true : disabledCharacters.includes(key.letter) ? false : key.isActive,
-                    isRepeating: repeatedHiddenAlphabet.includes(key.letter) && true
-                }))
-            );
-
-
-
-
-            // console.log('ACTIVE KEYS', newKeyboard)
-
-            setRows(newKeyboard);
-            // const updatedPhrase = puzzleData['round_5'];
-            setPhrase(updatedPhrase); // Update the phrase based on round
-        }
+                        //  isActive: repeatedHiddenAlphabet.includes(key.letter) ? true : disabledCharacters.includes(key.letter) ? false : key.isActive,
+                        isRepeating: repeatedHiddenAlphabet.includes(key.letter) && true
+                    }))
+                );
+    
+    
+                setRows(newKeyboard);
+                // const updatedPhrase = puzzleData['round_5'];
+                setPhrase(updatedPhrase); // Update the phrase based on round
+            }
+        })()
     }, [round]); // Update whenever round changes
 
     const filterKeyboardKeys = () => {
@@ -210,7 +207,6 @@ export default function PlayGame({ navigation }) {
 
                     if (prev_id >= 0 && prev_id < phrase.length) {
                         const prevItem = phrase[prev_id];
-                        // console.log('PREV_ITEM', prevItem);
 
                         // Handle `isDoubleLocked` for the previous item
                         if (prevItem.isDoubleLocked) {
@@ -229,7 +225,6 @@ export default function PlayGame({ navigation }) {
 
                     if (next_id >= 0 && next_id < phrase.length) {
                         const nextItem = phrase[next_id];
-                        // console.log('NEXT_ITEM', nextItem);
 
                         // Handle `isDoubleLocked` for the next item
                         if (nextItem.isDoubleLocked) {
@@ -300,10 +295,8 @@ export default function PlayGame({ navigation }) {
 
                     // Set the updated phrase
                     let remainingCount = updatedData.filter(item => item.isHidden).length;
-                    // console.log('REMAINING COUNT', remainingCount);
 
 
-                    // console.log(`UPDATED DATA : ${JSON.stringify(updatedData)}`);
                     setPhrase(updatedData);
                     seteletterOccur(occurCount);
 
@@ -313,7 +306,6 @@ export default function PlayGame({ navigation }) {
                     setcorrectletter(null);
                     filterKeyboardKeys();
                     changeIndex('next');
-                    // console.log(`remainingCount : ${remainingCount}`);
                     if (remainingCount == 0) {
                         if (firsttry) {
                             await first_try_win();
@@ -325,8 +317,6 @@ export default function PlayGame({ navigation }) {
                         let total_words = string.split(' ').length;
                         console.log('TOTAL WORDS', total_words);
                         await word_solved(total_words);
-                        // console.log(total_words);
-                        // console.log(`NOW START NAVIGATING`);
                         navigation.navigate('ResultScreen', { quote: string });
                     }
                 } else {
@@ -374,7 +364,6 @@ export default function PlayGame({ navigation }) {
     };
 
     const handlePress = async (item) => {
-        // console.log('ITEM', item);
         if (enableHint) {
             if (item.isDoubleLocked || item.isSingleLocked) {
                 console.log('you are not able to reveal the locked item \n', item);
@@ -388,7 +377,6 @@ export default function PlayGame({ navigation }) {
 
                 if (prev_id >= 0 && prev_id < phrase.length) {
                     const prevItem = phrase[prev_id];
-                    // console.log('PREV_ITEM', prevItem);
 
                     // Handle `isDoubleLocked` for the previous item
                     if (prevItem.isDoubleLocked) {
@@ -407,7 +395,6 @@ export default function PlayGame({ navigation }) {
 
                 if (next_id >= 0 && next_id < phrase.length) {
                     const nextItem = phrase[next_id];
-                    // console.log('NEXT_ITEM', nextItem);
 
                     // Handle `isDoubleLocked` for the next item
                     if (nextItem.isDoubleLocked) {
@@ -452,7 +439,9 @@ export default function PlayGame({ navigation }) {
                 await set_async_data('hints', hints - 1);
                 setavailableHints(availableHints - 1);
 
-                let remainingCount = phrase.filter(item => item.isHidden).length;
+                let remainingCount = updatedData.filter(item => item.isHidden).length;
+                console.log(`PHRASE ${JSON.stringify(updatedData)}`);
+                console.log(`REMAINING COUNT ${remainingCount}`);
                 if (remainingCount == 0) {
                     let string = concatenateAlphabets(phrase);
                     await set_async_data('round', `round_${parseInt(round.split('_')[1]) + 1}`);
@@ -467,16 +456,6 @@ export default function PlayGame({ navigation }) {
             }
         }
     };
-
-    const handleLocks = (item) => {
-        if (item.isDoubleLocked) {
-            return <Image style={{ width: 15, height: 24, position: 'absolute', zIndex: 3, top: '-60%', alignSelf: 'center' }} source={require('../assets/images/icons/lock.png')} />
-        } else if (item.isSingleLocked) {
-            return <Image style={{ width: 15, height: 24, position: 'absolute', zIndex: 3, top: '-60%', alignSelf: 'center' }} source={require('../assets/images/icons/lock.png')} />
-        } else {
-            return null;
-        }
-    }
 
     const renderPuzzle = () => {
         let content = [];
@@ -575,7 +554,6 @@ export default function PlayGame({ navigation }) {
 
         if (type == 'resume') {
             // SHOW AD AND MISTAKE KAM KRNI YAHAN PR
-            console.log('sub mistake');
             setrewardad(true);
         }
     }
@@ -620,7 +598,7 @@ export default function PlayGame({ navigation }) {
 
                 {/* {settings && <Settings setsettings={setsettings} />} */}
                 {isConnected ? (<View style={{ width: width, height: 50 }}>
-                    <BannerAd unitId={BANNER_AD} size={BannerAdSize.ANCHORED_ADAPTIVE_BANNER} onAdLoaded={() => setAdLoaded(true)}
+                    <BannerAd unitId={BANNER_AD} size={BannerAdSize.ANCHORED_ADAPTIVE_BANNER} onAdLoaded={() => console.log('Ad Loaded')}
                         onAdFailedToLoad={(error) => console.error('Ad failed to load:', error)} />
                 </View>) : (<View style={{ width: width, height: 50 }}></View>)}
             </View>
@@ -629,6 +607,7 @@ export default function PlayGame({ navigation }) {
             {errorModal && <ErrorModal start_game={start_game} />}
             {rewardad && (<RewardedAd adId={RESUME_REWARD} setrewardad={setrewardad} seterrorModal={seterrorModal} mistake={mistake} setmistake={setmistake} adPurpose={'resume_game'} />)}
             {hintAd && <HintRewardedAd adId={HINT_REWARD} adPurpose={'hint_ad'} sethintAd={sethintAd} setavailableHints={setavailableHints} />}
+            {/* {restart && (<InterstitialFlooring setrestart={setrestart} seterrorModal={seterrorModal} adPurpose={'restart_game'}/>)} */}
             {restart && (<RewardedAd adId={RESUME_REWARD} setrestart={setrestart} seterrorModal={seterrorModal} mistake={mistake} setmistake={setmistake} adPurpose={'restart_game'} />)}
 
             {/* {settings && <Settings setsettings={setsettings} />} */}

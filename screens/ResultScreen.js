@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { View, StyleSheet, Text, Image, Dimensions, ScrollView, ImageBackground, TouchableOpacity, Linking } from 'react-native';
 import { get_async_data, set_async_data } from "../Helper/AppHelper";
 import moment from "moment";
+import analytics from '@react-native-firebase/analytics';
 
 const { width } = Dimensions.get('screen');
 
@@ -38,6 +39,8 @@ export default function ResultScreen({ route, navigation }) {
             let lvl = await get_async_data('round');
             // let phrase = route.params.quote;
             setlevel(parseInt(lvl.split('_')[1]) - 1);
+
+            await analytics().logEvent('Result Screen');
 
             if (startTime != null || startTime != undefined) {
                 let currentTime = formatCurrentTime();

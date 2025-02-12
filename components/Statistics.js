@@ -43,7 +43,7 @@ export default function Statistics({ setshowstats, levelcompleted, data }) {
                                     <Text style={[style.optText, { fontSize: 15, marginLeft: 8 }]}>Level Completed</Text>
                                 </View>
                                 <View style={{ padding: 5 }}>
-                                    <Text style={style.optText}>{levelcompleted.split('_')[1] - 1}</Text>
+                                    <Text style={style.optText}>{levelcompleted != null && (levelcompleted.split('_')[1] - 1)}</Text>
                                 </View>
                             </ImageBackground>
 
@@ -83,7 +83,7 @@ export default function Statistics({ setshowstats, levelcompleted, data }) {
                                     <Text style={[style.optText, { fontSize: 15, marginLeft: 8 }]}>Days Completed</Text>
                                 </View>
                                 <View style={{ padding: 5 }}>
-                                    <Text style={style.optText}>{data.days_completed.length > 0 ? data.days_completed.length : 0}</Text>
+                                    <Text style={style.optText}>{data.days_completed > 0 ? data.days_completed : 0}</Text>
                                 </View>
                             </ImageBackground>
 
@@ -93,7 +93,7 @@ export default function Statistics({ setshowstats, levelcompleted, data }) {
                                     <Text style={[style.optText, { fontSize: 15, marginLeft: 8 }]}>Months Completed</Text>
                                 </View>
                                 <View style={{ padding: 5 }}>
-                                    <Text style={style.optText}>{data.days_completed.length > 28 ? 1: 0}</Text>
+                                    <Text style={style.optText}>{data.days_completed > 28 ? 1: 0}</Text>
                                 </View>
                             </ImageBackground>
 

@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "811440145032",
+    "project_id": "cryptogram-letter-puzzle",
+    "storage_bucket": "cryptogram-letter-puzzle.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:811440145032:android:d1faf4daeb5b6a38e8553d",
+        "android_client_info": {
+          "package_name": "com.cryptogram.code.letterpuzzle"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDJcrUTf2nkIx33INiBtpvSDVDEkCm0mmE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

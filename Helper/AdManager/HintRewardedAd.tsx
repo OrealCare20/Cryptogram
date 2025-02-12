@@ -13,13 +13,13 @@ export default function HintRewardedAd(props: any) {
   );
 
   useEffect(() => {
-    console.log('Loading Rewarded Interstitial Ad');
+    console.log('Loading Rewarded Ad');
     load();
   }, [load]);
 
   useEffect(() => {
     if (error) {
-      console.log('Hint Rewarded Interstitial Ad error', error);
+      console.log('Hint Rewarded Ad error', error);
     }
   }, [error]);
 

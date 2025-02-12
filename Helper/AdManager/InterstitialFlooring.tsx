@@ -5,7 +5,7 @@ export default function InterstitialFlooring(props: any) {
   const [errorStatus, seterrorStatus] = useState(false);
 
   const { isLoaded, isClosed, load, show, error } = useInterstitialAd(
-    'ca-app-pub-3940256099942544/4411468910',
+    'ca-app-pub-3940256099942544/1033173712',
     {
       requestNonPersonalizedAdsOnly: true,
     },
@@ -14,7 +14,7 @@ export default function InterstitialFlooring(props: any) {
     console.log('Loading Interstitial Ad');
     load();
   }, [load]);
-  
+
   useEffect(() => {
     console.log('Interstitial Ad error', error);
     // load();
@@ -27,17 +27,17 @@ export default function InterstitialFlooring(props: any) {
         if (props.adType == 'low') {
           props.continue();
         }
-        props._loadStatus(false);
         seterrorStatus(true);
       } else {
         seterrorStatus(false);
       }
     })()
   }, [error]);
-  
+
   useEffect(() => {
-    if (isClosed) {
-      props._loadStatus(true);
+    if (props.adPurpose == 'restart_game') {
+      props.setrestart(false);
+      props.seterrorModal(false);
     }
   }, [isClosed]);
 

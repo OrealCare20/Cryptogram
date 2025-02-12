@@ -6,16 +6,22 @@ import { enableFreeze } from 'react-native-screens';
 import SplashScreen from 'react-native-splash-screen';
 import { StatusBar } from 'react-native';
 import SystemNavigationBar from 'react-native-system-navigation-bar';
-import { days_completed, set_async_data, remaining_lifes, generate_id } from './Helper/AppHelper';
-
+import analytics from '@react-native-firebase/analytics';
+import crashlytics from '@react-native-firebase/crashlytics';
+import { days_completed, set_async_data, remaining_lifes, generate_id, firebaseConfig } from './Helper/AppHelper';
 enableFreeze(true);
 
 const App = () => {
 
   SystemNavigationBar.immersive();
 
+
   useEffect(() => {
     (async () => {
+      crashlytics().setCrashlyticsCollectionEnabled(true)
+      // crashlytics().crash()
+      analytics().setAnalyticsCollectionEnabled(true);
+
       await generate_id();
       await days_completed();
       await remaining_lifes();

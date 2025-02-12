@@ -88,7 +88,7 @@ const Home = ({ navigation }: { navigation: any }) => {
                 navigation.navigate('AppTour');
             } else{
                 navigation.navigate('PlayGame');
-                // navigation.navigate('Congratulation');
+                // navigation.navigate('TestScreen');
             }
         }
     }

@@ -1,6 +1,6 @@
 {
-  "name": "Cryptogram",
-  "displayName": "Cryptogram",
+  "name": "Cryptogram Letter Puzzle",
+  "displayName": "Cryptogram Letter Puzzle",
   "react-native-google-mobile-ads": {
     "android_app_id": "ca-app-pub-3781511156022357~6661150843",
     "ios_app_id": ""
