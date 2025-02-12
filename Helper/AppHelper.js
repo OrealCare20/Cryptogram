@@ -16,15 +16,15 @@ export const firebaseConfig = {
 
 
 // TEST AD ID
-// export const BANNER_AD = 'ca-app-pub-3940256099942544/9214589741';
-// export const COIN_REWARD = 'ca-app-pub-3940256099942544/5354046379';
-// export const HINT_REWARD = 'ca-app-pub-3940256099942544/5354046379';
-// export const RESUME_REWARD = 'ca-app-pub-3940256099942544/5224354917';
+export const BANNER_AD = 'ca-app-pub-3940256099942544/9214589741';
+export const COIN_REWARD = 'ca-app-pub-3940256099942544/5354046379';
+export const HINT_REWARD = 'ca-app-pub-3940256099942544/5354046379';
+export const RESUME_REWARD = 'ca-app-pub-3940256099942544/5224354917';
 // LIVE AD ID'S
-export const BANNER_AD = 'ca-app-pub-3781511156022357/9088003632';
-export const COIN_REWARD = 'ca-app-pub-3781511156022357/5648587543';
-export const HINT_REWARD = 'ca-app-pub-3781511156022357/4746569410';
-export const RESUME_REWARD = 'ca-app-pub-3781511156022357/9998896090';
+// export const BANNER_AD = 'ca-app-pub-3781511156022357/9088003632';
+// export const COIN_REWARD = 'ca-app-pub-3781511156022357/5648587543';
+// export const HINT_REWARD = 'ca-app-pub-3781511156022357/4746569410';
+// export const RESUME_REWARD = 'ca-app-pub-3781511156022357/9998896090';
 
 // Optional configuration
 export const options = {
