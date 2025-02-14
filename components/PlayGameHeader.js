@@ -8,7 +8,7 @@ import {
 } from 'react-native';
 import { get_async_data } from '../Helper/AppHelper';
 
-export default function PlayGameHeader({ mistake, round, setlivemodel }) {
+export default function PlayGameHeader({ mistake, round, setlivemodel, livemodel }) {
     // Limit mistake count to a maximum of 3
     const [lives, setuseState] = useState(5);
     
@@ -20,7 +20,7 @@ export default function PlayGameHeader({ mistake, round, setlivemodel }) {
             let a = await get_async_data('remaining_lifes');
             setuseState(a);
         })();
-    }, []);
+    }, [livemodel]);
 
     return (
         <View style={styles.header}>

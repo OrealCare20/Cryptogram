@@ -101,7 +101,7 @@ const Home = ({ navigation }: { navigation: any }) => {
                     <View style={style.headerBadge}>
                         <Text style={style.headerText}>{lives}</Text>
                     </View>
-                    <TouchableOpacity onPress={() => setrewardad(true)}>
+                    <TouchableOpacity onPress={() => setlivemodel(true)}>
                         <Image style={{ width: 30, height: 30, marginLeft: 4 }} source={require('../assets/images/plus.png')} />
                     </TouchableOpacity>
                 </View>
@@ -127,7 +127,7 @@ const Home = ({ navigation }: { navigation: any }) => {
                             customStyle={{ color: '#A26361', textShadowColor: '#19E6E1', textShadowRadius: 1, top: -5, marginBottom: 7 }}
                         />
 
-                        <Text style={{ fontSize: 17, top: 10, textAlign: 'center', fontFamily: "Inter_24pt-SemiBold", fontWeight: '700' }}>Complete 15 level to Unlock</Text>
+                        <Text style={{ fontSize: 17, top: 10, textAlign: 'center', fontFamily: "Inter_24pt-SemiBold", fontWeight: '700', color:'#91403D' }}>Complete 16 level to Unlock</Text>
 
                         <View style={{ flexDirection: 'row', alignItems: 'center', top: 30 }}>
                             <Progress.Bar progress={completedpercent} width={170} height={11} color='#FF9602' unfilledColor='#E9E3DC' borderWidth={0} borderRadius={7} />

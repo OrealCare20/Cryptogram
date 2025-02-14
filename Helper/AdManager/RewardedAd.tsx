@@ -31,6 +31,7 @@ export default function RewardedAd(props: any) {
         props.setrewardad(false);
         props.setrestart(false);
         props.seterrorModal(false);
+        props.setlivemodel(false);
       } else {
         seterrorStatus(false);
       }

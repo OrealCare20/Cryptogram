@@ -5220,7 +5220,7 @@ let puzzleData = {
             number: 25,
             isHidden: true,
             isSingleLocked: false,
-            isKey: false,
+            isKey: true,
             isDoubleLocked: false
         },
         {
