@@ -46,24 +46,24 @@ const GuidenceBox = ({ click, setclick }) => {
                 <Text style={style.text}>Choose a letter.</Text>
             )
         }
-        if (click == 3) {
-            jsx = (
-                <>
-                    <View style={{ backgroundColor: '#fff', padding: 5, width: 40, alignSelf: 'center' }}>
-                        <Text style={[style.text, { color: '#01b274', fontWeight: '700' }]}>E</Text>
-                    </View>
-                    <Text style={[style.text, { fontSize: 18 }]}>A <Text style={{ color: '#01b274', fontWeight: '700' }}>green</Text> letter on the keyboard means there are more instances of the letter in the phrease .</Text>
-                </>
-            )
-        }
-        if (click == 4) {
-            jsx = (
-                <>
-                    <Text style={style.text}>Decrypt the whole phrase.</Text>
-                    <Text style={style.text}>Good luck!</Text>
-                </>
-            )
-        }
+        // if (click == 3) {
+        //     jsx = (
+        //         <>
+        //             <View style={{ backgroundColor: '#fff', padding: 5, width: 40, alignSelf: 'center' }}>
+        //                 <Text style={[style.text, { color: '#01b274', fontWeight: '700' }]}>E</Text>
+        //             </View>
+        //             <Text style={[style.text, { fontSize: 18 }]}>A <Text style={{ color: '#01b274', fontWeight: '700' }}>green</Text> letter on the keyboard means there are more instances of the letter in the phrease .</Text>
+        //         </>
+        //     )
+        // }
+        // if (click == 4) {
+        //     jsx = (
+        //         <>
+        //             <Text style={style.text}>Decrypt the whole phrase.</Text>
+        //             <Text style={style.text}>Good luck!</Text>
+        //         </>
+        //     )
+        // }
         return jsx;
     }
 

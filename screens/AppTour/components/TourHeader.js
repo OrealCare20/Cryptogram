@@ -25,7 +25,7 @@ const TourHeader = () => {
 
                 <View style={styles.column}>
                     <Text style={[styles.headerText, { textAlign: 'right' }]}>
-                        Level 1
+                        Tour Level
                     </Text>
                 </View>
             </View>
@@ -35,12 +35,12 @@ const TourHeader = () => {
 const styles = StyleSheet.create({
     header: {
         width: '100%',
-        paddingVertical: 15,
+        paddingVertical: 25,
         paddingHorizontal: 20,
         flexDirection: 'row',
         justifyContent: 'space-between',
         backgroundColor: '#fff',
-        alignItems: 'center'
+        alignItems: 'center',
     },
     column: {
         width: '33%',

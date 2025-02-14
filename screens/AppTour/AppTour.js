@@ -5,11 +5,14 @@ import TourHeader from './components/TourHeader';
 import { puzzleData } from '../../Helper/data';
 import Keyboard from './components/Keyboard';
 import { trigger } from "react-native-haptic-feedback";
-import { options, set_async_data } from '../../Helper/AppHelper';
+import { BANNER_AD, options, set_async_data } from '../../Helper/AppHelper';
+import { BannerAd, BannerAdSize } from 'react-native-google-mobile-ads';
+import { useNetInfo } from '@react-native-community/netinfo';
 
 const { width, height } = Dimensions.get('screen');
 
-const AppTour = ({navigation}) => {
+const AppTour = ({ navigation }) => {
+    const { type, isConnected } = useNetInfo();
     const [click, setclick] = useState(0); // HANDLE ** TAP TO CONTINUE TEXT **
     const [data, setData] = useState(puzzleData['Round1']); // puzzle sentence
     const [phrase, setPhrase] = useState(data); // puzzle sentence
@@ -27,7 +30,7 @@ const AppTour = ({navigation}) => {
     }, [data]);
 
     useEffect(() => {
-        (async ()=> {
+        (async () => {
             if (letterpressed) {
                 if (letterpressed === correctletter) {
                     const updatedData = phrase.map(item =>
@@ -40,8 +43,8 @@ const AppTour = ({navigation}) => {
                     setcorrectletter(null);
                     filterKeyboardKeys();
                     changeIndex('next');
-    
-                    if(remainingCount == 0) {
+
+                    if (remainingCount == 0) {
                         await set_async_data('app_tour', 'passed');
                         navigation.navigate('Home');
                     }
@@ -100,11 +103,11 @@ const AppTour = ({navigation}) => {
                 }
             } else {
                 const letterElement = (
-                    <View onTouchEnd={() => { item.id == 3 && click == 1 ? setclick(click + 1) : null }} style={styles.letterContainer} key={`letter-${index}`}>
-                        <Text onPress={() => handlePress(item)} style={[getLetterStyle(item), {color: '#000'}]}>
-                            {item.show || (focusId === item.id && letterpressed) ? item.letter : ''}
+                    <View onTouchEnd={() => { item.id == 3 && click == 1 ? setclick(prevClick => prevClick + 1) : null }} style={[{ width: 20, height: 50, justifyContent: 'center' }, focusId != null && focusId == item.id ? { backgroundColor: '#FFB002', borderRadius: 6 } : {}]} key={`letter-${index}`}>
+                        <Text onPress={() => handlePress(item)} style={[getLetterStyle(item), { alignSelf: 'center', borderBottomWidth: 1.5, borderBottomColor: '#668899' }]}>
+                            {item.show || (focusId === item.id && letterpressed) ? item.letter : ' '}
                         </Text>
-                        <Text style={{color: '#000', textAlign: 'center'}}>{item.number}</Text>
+                        <Text style={{ fontSize: 13, textAlign: 'center', marginTop: 0, color: '#668899' }}>{item.number}</Text>
                         {/* pointer arrow shows here... */}
                         {item.id == 3 && click == 1 ? (<Image style={styles.pointingGif} source={require('../../assets/images/giphy.gif')} />) : null}
                     </View>
@@ -124,15 +127,22 @@ const AppTour = ({navigation}) => {
         return content;
     };
 
+
     const getLetterStyle = (item) => ({
         ...styles.textInput,
-        backgroundColor: !item.show && focusId === item.id ? '#FFB002' : item.show ? 'transparent' : '#fff',
+        // backgroundColor: item.isHidden && focusId === item.id ? '#FFB002' : !item.isHidden ? 'transparent' : 'transparent',
+        borderBottomColor: !item.show && focusId === item.id ? '#b37a00' : {},
+        borderBottomWidth: !item.show && focusId === item.id ? 4 : 0,
+        backgroundColor: !item.show && focusId === item.id ? '#FFB002' : item.show ? 'transparent' : 'transparent',
         textAlign: 'center',
     });
 
     useEffect(() => {
         // console.log(`click count : ${click}`);
-        if (click == 2) { changeIndex('next') }
+        console.log(`Click count: ${click}`);
+        if (click >= 2) {
+            changeIndex('next');
+        }
     }, [click]);
 
     return (
@@ -141,12 +151,12 @@ const AppTour = ({navigation}) => {
 
             <ScrollView contentContainerStyle={styles.scrollContent}>
                 <View style={styles.iButtonContainer}>
-                    <TouchableOpacity>
+                    {/* <TouchableOpacity>
                         <Image style={styles.icon} source={require('../../assets/images/i-button.png')} />
-                    </TouchableOpacity>
+                    </TouchableOpacity> */}
                 </View>
                 {renderPuzzle()}
-                {click < 5 && (<GuidenceBox click={click} setclick={setclick} />)}
+                {click <= 2 && (<GuidenceBox click={click} setclick={setclick} />)}
             </ScrollView>
 
             {/* KEYBOARD ATERA */}
@@ -154,8 +164,13 @@ const AppTour = ({navigation}) => {
                 {click > 1 && (<Keyboard activeLetters={activeLetters} setletterpressed={setletterpressed} changeIndex={changeIndex} click={click} setclick={setclick} />)}
             </View>
 
+            {isConnected ? (<View style={{ width: width, marginBottom: 5 }}>
+                <BannerAd unitId={BANNER_AD} size={BannerAdSize.ANCHORED_ADAPTIVE_BANNER} onAdLoaded={() => console.log(true)}
+                    onAdFailedToLoad={(error) => console.error('Ad failed to load:', error)} />
+            </View>) : (<View style={{ width: width }}></View>)}
+
             {/* MASK FOR HANDLING ** TAP LOGIC ** */}
-            {click == 0 || click == 3 ? (<View onTouchEnd={() => setclick(click + 1)} style={styles.mask}></View>) : null}
+            {click == 0 || click == 3 ? (<View onTouchEnd={() => setclick(prevClick => prevClick + 1)} style={styles.mask}></View>) : null}
 
         </>
     )
@@ -204,13 +219,15 @@ const styles = StyleSheet.create({
         marginBottom: 30, // Added margin to the bottom of each row
     },
     textInput: {
-        height: 30,
+        height: 21,
         width: 20,
-        fontSize: 18,
+        fontSize: 22,
+        fontWeight: '600',
         textAlign: 'center',
-        backgroundColor: '#fff',
+        backgroundColor: 'transparent',
         borderRadius: 6,
-        margin: 2,
+        lineHeight: 22,
+        color: '#663c00'
     },
     blankSpace: {
         width: 10,
@@ -219,9 +236,10 @@ const styles = StyleSheet.create({
     pointingGif: {
         width: 20,
         height: 57,
+        position: 'absolute',
         resizeMode: 'contain',
-        bottom: '14%',
-        transform: [{ scale: 2 }]
+        bottom: '-75%',
+        transform: [{ scale: 1.5 }]
     },
 });
 export default AppTour;

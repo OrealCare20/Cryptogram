@@ -4,18 +4,18 @@ import OutlinedText from '@kdn0325/react-native-outlined-text';
 import PulseLoader from "./PulseLoader";
 
 
-export default function LivesModel({ setlivemodel, setrewardad }) {
+export default function LivesModel({ setlivemodel, setearncoin }) {
     const [loader, setloader] = useState(false);
 
     const watch_ad = () => {
-        setloader(true);
-        setrewardad(true);
+        setloader(prevState => !prevState);
+        setearncoin(prevState => !prevState);
     }
 
     return (
         <SafeAreaView style={styles.centeredView}>
             <View style={styles.mainContainer} showsVerticalScrollIndicator={false} scrollsToTop>
-                <TouchableOpacity onPress={() => { if (!loader) { setlivemodel(false) } }}>
+                <TouchableOpacity onPress={() => { setlivemodel(false) } }>
                     <Image source={require('../assets/images/close.png')} style={styles.closeIcon} />
                 </TouchableOpacity>
                 <Text style={styles.mistakesTitle}>Need more Lives ?</Text>

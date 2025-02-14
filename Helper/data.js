@@ -15,7 +15,7 @@ let puzzleData = {
         {
             id: 3,
             show: false,
-            number: 1,
+            number: 19,
             letter: "E"
         },
         {
@@ -27,7 +27,7 @@ let puzzleData = {
         {
             id: 5,
             show: true,
-            number: 1,
+            number: 19,
             letter: "E"
         },
         {
@@ -51,7 +51,7 @@ let puzzleData = {
         {
             id: 8,
             show: false,
-            number: 1,
+            number: 19,
             letter: "E"
         },
         {
@@ -63,7 +63,7 @@ let puzzleData = {
         {
             id: 10,
             show: true,
-            number: 1,
+            number: 19,
             letter: "E"
         },
         {
@@ -111,7 +111,7 @@ let puzzleData = {
         {
             id: 16,
             show: false,
-            number: 21,
+            number: 19,
             letter: "E"
         },
         {
@@ -135,7 +135,7 @@ let puzzleData = {
         {
             id: 19,
             show: true,
-            number: 1,
+            number: 19,
             letter: "E"
         },
         {
@@ -147,7 +147,7 @@ let puzzleData = {
         {
             id: 21,
             show: true,
-            number: 1,
+            number: 19,
             letter: "E"
         },
         {
@@ -176,8 +176,8 @@ let puzzleData = {
         },
         {
             id: 24,
-            show: false,
-            number: 27,
+            show: true,
+            number: 5,
             letter: "L"
         },
         {
@@ -195,7 +195,7 @@ let puzzleData = {
         {
             id: 27,
             show: false,
-            number: 1,
+            number: 19,
             letter: "E"
         }
     ]

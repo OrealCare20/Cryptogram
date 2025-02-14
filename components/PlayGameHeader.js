@@ -8,17 +8,17 @@ import {
 } from 'react-native';
 import { get_async_data } from '../Helper/AppHelper';
 
-export default function PlayGameHeader({ mistake, round, setlivemodel, livemodel }) {
+export default function PlayGameHeader({ mistake, round, setlivemodel, livemodel, totalcoin }) {
     // Limit mistake count to a maximum of 3
-    const [lives, setuseState] = useState(5);
+    // const [lives, setuseState] = useState(5);
     
     useEffect(()=>{
         (async ()=> {
             if (mistake > 3) {
                 mistake = 3;
             }
-            let a = await get_async_data('remaining_lifes');
-            setuseState(a);
+            // let a = await get_async_data('remaining_lifes');
+            // setuseState(a);
         })();
     }, [livemodel]);
 
@@ -28,7 +28,7 @@ export default function PlayGameHeader({ mistake, round, setlivemodel, livemodel
                 <View style={{ width: '100%', flexDirection: 'row', alignItems: 'center' }}>
                     <Image style={styles.headerBadgeIcon} source={require('../assets/images/OBJECTS.png')} />
                     <View style={styles.headerBadge}>
-                        <Text style={[styles.headerText, {color: '#BE8763', fontSize: 15, fontWeight: '800'}]}>{lives}</Text>
+                        <Text style={[styles.headerText, {color: '#BE8763', fontSize: 15, fontWeight: '800'}]}>{totalcoin}</Text>
                     </View>
                     <TouchableOpacity style={{padding: 5}} onPress={()=>setlivemodel(true)}>
                         <Image style={{ width: 18.4, height: 18.9, marginLeft: 0 }} source={require('../assets/images/plus.png')} />

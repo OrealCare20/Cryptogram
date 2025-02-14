@@ -53,7 +53,7 @@ export default function Statistics({ setshowstats, levelcompleted, data }) {
                                     <Text style={[style.optText, { fontSize: 15, marginLeft: 8 }]}>First Try Win</Text>
                                 </View>
                                 <View style={{ padding: 5 }}>
-                                    <Text style={style.optText}>{data.first_try_win}</Text>
+                                    <Text style={style.optText}>{data.first_try_win != null ? data.first_try_win : 0}</Text>
                                 </View>
                             </ImageBackground>
 
@@ -63,7 +63,7 @@ export default function Statistics({ setshowstats, levelcompleted, data }) {
                                     <Text style={[style.optText, { fontSize: 15, marginLeft: 8 }]}>Word Solved</Text>
                                 </View>
                                 <View style={{ padding: 5 }}>
-                                    <Text style={style.optText}>{data.word_solved}</Text>
+                                    <Text style={style.optText}>{data.word_solved != null ? data.word_solved : 0}</Text>
                                 </View>
                             </ImageBackground>
 
@@ -73,7 +73,7 @@ export default function Statistics({ setshowstats, levelcompleted, data }) {
                                     <Text style={[style.optText, { fontSize: 15, marginLeft: 8 }]}>Letters Solved</Text>
                                 </View>
                                 <View style={{ padding: 5 }}>
-                                    <Text style={style.optText}>{data.letter_solved}</Text>
+                                    <Text style={style.optText}>{data.letter_solved != null ? data.letter_solved : 0}</Text>
                                 </View>
                             </ImageBackground>
 
@@ -83,7 +83,7 @@ export default function Statistics({ setshowstats, levelcompleted, data }) {
                                     <Text style={[style.optText, { fontSize: 15, marginLeft: 8 }]}>Days Completed</Text>
                                 </View>
                                 <View style={{ padding: 5 }}>
-                                    <Text style={style.optText}>{data.days_completed > 0 ? data.days_completed : 0}</Text>
+                                    <Text style={style.optText}>{data.days_completed != null && data.days_completed > 0 ? data.days_completed : 0}</Text>
                                 </View>
                             </ImageBackground>
 
@@ -93,7 +93,7 @@ export default function Statistics({ setshowstats, levelcompleted, data }) {
                                     <Text style={[style.optText, { fontSize: 15, marginLeft: 8 }]}>Months Completed</Text>
                                 </View>
                                 <View style={{ padding: 5 }}>
-                                    <Text style={style.optText}>{data.days_completed > 28 ? 1: 0}</Text>
+                                    <Text style={style.optText}>{data.days_completed!= null && data.days_completed > 28 ? 1: 0}</Text>
                                 </View>
                             </ImageBackground>
 

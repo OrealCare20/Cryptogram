@@ -40,7 +40,7 @@ export default function ResultScreen({ route, navigation }) {
             // let phrase = route.params.quote;
             setlevel(parseInt(lvl.split('_')[1]) - 1);
 
-            await analytics().logEvent('Result Screen');
+            
 
             if (startTime != null || startTime != undefined) {
                 let currentTime = formatCurrentTime();
@@ -59,6 +59,8 @@ export default function ResultScreen({ route, navigation }) {
             } else {
                 console.log('bc time ni set howa')
             }
+
+            await analytics().logEvent('Result Screen');
         })()
     }, []);
 

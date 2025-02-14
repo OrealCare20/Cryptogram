@@ -35,8 +35,8 @@ export default function ErrorModal({ start_game }) {
                 <TouchableOpacity onPress={() => press('home')}>
                     <ImageBackground style={styles.btn} source={require('../assets/images/home_btn.png')}>
                         <View style={styles.package}>
-                            <Text style={[styles.text, { color: '#F99A26' }]}>-3</Text>
-                            <Image style={styles.gem} source={require('../assets/images/icons/gem.png')} />
+                            {/* <Text style={[styles.text, { color: '#F99A26' }]}>-3</Text>
+                            <Image style={styles.gem} source={require('../assets/images/icons/gem.png')} /> */}
                             <Text style={[styles.text, { color: '#ff0000', marginLeft: 7 }]}>-1</Text>
                             <Image style={[styles.coin, { marginLeft: 4 }]} source={require('../assets/images/OBJECTS.png')} />
                         </View>
@@ -46,8 +46,8 @@ export default function ErrorModal({ start_game }) {
                 <TouchableOpacity onPress={() => press('restart')}>
                     <ImageBackground style={styles.btn} source={require('../assets/images/restart_btn.png')}>
                         <View style={styles.package}>
-                            <Text style={[styles.text, { color: '#F99A26' }]}>-3</Text>
-                            <Image style={styles.gem} source={require('../assets/images/icons/gem.png')} />
+                            {/* <Text style={[styles.text, { color: '#F99A26' }]}>-3</Text>
+                            <Image style={styles.gem} source={require('../assets/images/icons/gem.png')} /> */}
                             <Text style={[styles.text, { color: '#ff0000', marginLeft: 7 }]}>-1</Text>
                             <Image style={[styles.coin, { marginLeft: 4 }]} source={require('../assets/images/OBJECTS.png')} />
                         </View>

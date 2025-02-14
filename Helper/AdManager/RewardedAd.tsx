@@ -16,22 +16,17 @@ export default function RewardedAd(props: any) {
     console.log('Loading Rewarded Ad');
     load();
   }, [load]);
-  
-  useEffect(() => {
-    console.log('Rewarded Ad error', error);
-    // load();
-  }, [error]);
 
   useEffect(() => {
     (async () => {
       if (error) {
         console.log('Rewarded Ad error', error);
+        props.setlivemodel(false);
         seterrorStatus(true);
         props.sethintAd(false);
         props.setrewardad(false);
         props.setrestart(false);
         props.seterrorModal(false);
-        props.setlivemodel(false);
       } else {
         seterrorStatus(false);
       }
@@ -43,15 +38,6 @@ export default function RewardedAd(props: any) {
       if (isClosed) {
           console.log('Rewarded Ad Closed');
           props.setrewardad(false);
-          if(props.adPurpose == 'adLive') {
-            console.log('Navigating')
-            props.navigation.navigate('PlayGame');
-          }
-  
-          if(props.adPurpose == 'onlyadLive') {
-            await add_life();
-            props.setlivemodel(false);
-          }
 
           if(props.adPurpose == 'hint_ad') {
             if (isClosed && !isEarnedReward) {
@@ -63,11 +49,6 @@ export default function RewardedAd(props: any) {
               props.setavailableHints(1);
             }
           }
-
-          if(props.adPurpose == 'restart_game') {
-            props.setrestart(false);
-            props.seterrorModal(false);
-          }
       }
     })()
   }, [isClosed]);
@@ -77,16 +58,7 @@ export default function RewardedAd(props: any) {
       console.log('isEarnedReward current value:', isEarnedReward);
       if (isEarnedReward) {
         console.log('EarnedReward', isEarnedReward)
-        
-          if (props.adPurpose == 'adLive') {
-            props.setlivemodel(false);
-          }
-  
-          if(props.adPurpose == 'resume_game') {
-            props.setmistake(props.mistake - 1);
-            props.seterrorModal(false);
-          }
-  
+       
           if (props.adPurpose === 'hint_ad') {
             console.log('Reward earned for hints');
             try {
@@ -98,11 +70,6 @@ export default function RewardedAd(props: any) {
               console.error('Error setting hint:', error);
             }
           }
-
-          if(props.adPurpose == 'restart_game') {
-            props.setrestart(false);
-            props.seterrorModal(false);
-          }
       } else {
         console.log('Reward not earned yet or no ad watched');
       }
@@ -113,10 +80,7 @@ export default function RewardedAd(props: any) {
     (async () => {
       if (isLoaded && !errorStatus) {
         show();
-        if (props.adPurpose == 'adLive') {
-          await add_life();
-        }
-
+      
         if(props.adPurpose == 'hint_ad') {
           props.sethintAd(false);
         }

@@ -17,7 +17,7 @@ import AlphabetKeyboard from '../components/AlphabetKeyboard';
 import { puzzleData } from '../Helper/dataOriginal';
 import PlayGameHeader from '../components/PlayGameHeader';
 import ErrorModal from '../components/ErrorModal';
-import { get_async_data, get_total_time, incrementValue, options, subtract_life, set_async_data, concatenateAlphabets, letter_solved, first_try_win, word_solved, getUnusedVisibleLetters, getRepeatedHiddenAlphabets, BANNER_AD, COIN_REWARD, RESUME_REWARD, HINT_REWARD } from '../Helper/AppHelper';
+import { get_async_data, get_total_time, incrementValue, options, subtract_life, set_async_data, concatenateAlphabets, letter_solved, first_try_win, word_solved, getUnusedVisibleLetters, getRepeatedHiddenAlphabets, BANNER_AD, COIN_REWARD, RESUME_REWARD, HINT_REWARD, add_life } from '../Helper/AppHelper';
 import PuzzleHeader from '../components/PuzzleHeader';
 import Settings from '../components/Settings';
 import moment from 'moment';
@@ -27,6 +27,8 @@ import HintRewardedAd from '../Helper/AdManager/HintRewardedAd';
 import Ibutton from '../components/Ibuton';
 import CommigSoon from '../components/CommingSoon';
 import LivesModel from '../components/LivesModel';
+import CoinReward from '../Helper/AdManager/CoinReward';
+import ResumeReward from '../Helper/AdManager/ResumeReward';
 
 const { width, height } = Dimensions.get('screen');
 
@@ -71,7 +73,7 @@ const intitialRows = [
 
 export default function PlayGame({ navigation }) {
     const { type, isConnected } = useNetInfo();
-    const [round, setRound] = useState('round_11'); // game round
+    const [round, setRound] = useState('round_1'); // game round
     const [data, setData] = useState(puzzleData[round]); // puzzle sentence
     const [phrase, setPhrase] = useState(data); // puzzle sentence
     const [mistake, setmistake] = useState(0); // mistake count
@@ -84,7 +86,7 @@ export default function PlayGame({ navigation }) {
     const [enableHint, setenableHint] = useState(false);
     const [letterOccur, seteletterOccur] = useState(null);
     const [rows, setRows] = useState(intitialRows);
-    const [rewardad, setrewardad] = useState(false);
+    const [resumerewardad, setresumerewardad] = useState(false);
     const [livemodel, setlivemodel] = useState(false);
     const [earncoin, setearncoin] = useState(false);
     const [hintAd, sethintAd] = useState(false);
@@ -92,6 +94,7 @@ export default function PlayGame({ navigation }) {
     const [firsttry, setfirsttry] = useState(true);
     const [restart, setrestart] = useState(false);
     const [ibutton, setibutton] = useState(false);
+    const [totalcoin, settotalcoin] = useState(5);
 
     SystemNavigationBar.immersive();
 
@@ -100,11 +103,11 @@ export default function PlayGame({ navigation }) {
         (async () => {
             if (restart == false) {
                 const fetchRoundData = async () => {
-                    console.log(data.length)
+                    // console.log(data.length)
                     let current_time = moment().format('YYYY-MM-DD HH:mm:ss');
                     await set_async_data('start_time', current_time);
                     let round = await get_async_data('round');
-                    // setRound(round); // update round state
+                    setRound(round); // update round state
 
                     let hint = await get_async_data('hints');
                     // console.log('available HINTS ', hint)
@@ -125,16 +128,17 @@ export default function PlayGame({ navigation }) {
     // Fetch round and update phrase when round changes
     useEffect(() => {
         const fetchRoundData = async () => {
-            console.log('PLAY AREA FOCUSED');
             let current_time = moment().format('YYYY-MM-DD HH:mm:ss');
             await set_async_data('start_time', current_time);
+            let a = await get_async_data('remaining_lifes');
+            settotalcoin(a);
             let round = await get_async_data('round');
             await analytics().logEvent(`Round_${round}`);
             if (round == 'round_17') {
                 await set_async_data('round', 'round_1');
-                // setRound('round_1');
+                setRound('round_1');
             } else {
-                // setRound(round); // update round state
+                setRound(round); // update round state
             }
 
             let hint = await get_async_data('hints');
@@ -322,16 +326,16 @@ export default function PlayGame({ navigation }) {
                         if (firsttry) {
                             await first_try_win();
                         }
-                        console.log(`puzzle complete next round: round_${parseInt(round.split('_')[1]) + 1}`);
+                        // console.log(`puzzle complete next round: round_${parseInt(round.split('_')[1]) + 1}`);
                         await set_async_data('round', `round_${parseInt(round.split('_')[1]) + 1}`);
                         let string = concatenateAlphabets(phrase);
                         // await get_total_time();
                         let total_words = string.split(' ').length;
-                        console.log('TOTAL WORDS', total_words);
+                        // console.log('TOTAL WORDS', total_words);
                         await word_solved(total_words);
                         // console.log(total_words);
                         // console.log(`NOW START NAVIGATING`);
-                        navigation.navigate('ResultScreen', { quote: string });
+                        navigation.replace('ResultScreen', { quote: string });
                     }
                 } else {
                     setfirsttry(false);
@@ -349,6 +353,11 @@ export default function PlayGame({ navigation }) {
         };
         handleLetterPress();
     }, [letterpressed, phrase, correctletter, focusId, rows, round]);
+
+    useEffect(() => {
+        // console.log(`useefff tot coin ${totalcoin}`)
+        settotalcoin(totalcoin);
+    }, [totalcoin])
 
     const changeIndex = (index) => {
         const currentIndex = phrase.findIndex(item => item.id === focusId);
@@ -510,7 +519,7 @@ export default function PlayGame({ navigation }) {
                 } else if (item.number == -3) {
                     letterElement = (
                         <View style={[{ width: 20, height: 55, justifyContent: 'center' }, hintStyle]} key={`letter-${index}`}>
-                            <Text style={[getLetterStyle(item), { alignSelf: 'center',borderBottomWidth: 1.5, borderBottomColor: '#668899' }]}>
+                            <Text style={[getLetterStyle(item), { alignSelf: 'center', borderBottomWidth: 1.5, borderBottomColor: '#668899' }]}>
                                 {item.alphabet}
                             </Text>
                             <Text style={{ fontSize: 13, textAlign: 'center', marginTop: 5, color: '#482A00' }}></Text>
@@ -518,11 +527,11 @@ export default function PlayGame({ navigation }) {
                     );
                 } else {
                     letterElement = (
-                        <View style={[{ width: 20, height: 50, justifyContent: 'center' }, hintStyle, focusId != null && focusId == item.id ? {backgroundColor: '#FFB002', borderRadius: 6} : {}]} key={`letter-${index}`}>
+                        <View style={[{ width: 20, height: 50, justifyContent: 'center' }, hintStyle, focusId != null && focusId == item.id ? { backgroundColor: '#FFB002', borderRadius: 6 } : {}]} key={`letter-${index}`}>
                             {/* {handleLocks(item)} */}
                             {item.isKey && (<Image style={{ width: 11, height: 20, position: 'absolute', zIndex: 3, top: '-40%', alignSelf: 'center' }} source={require('../assets/images/icons/star.png')} />)}
                             {isSingleLocked ? (<View onPress={() => handlePress(item)} style={[getLetterStyle(item), { alignSelf: 'center', backgroundColor: 'transparent' }]}><Image style={{ width: 15, height: 24, position: 'absolute', zIndex: 3, top: 10, alignSelf: 'center' }} source={item.isDoubleLocked ? require('../assets/images/icons/lock.png') : require('../assets/images/icons/locked.png')} /></View>) : (
-                                <Text onPress={() => handlePress(item)} style={[getLetterStyle(item), { alignSelf: 'center',borderBottomWidth: 1.5, borderBottomColor: '#668899'}]}>
+                                <Text onPress={() => handlePress(item)} style={[getLetterStyle(item), { alignSelf: 'center', borderBottomWidth: 1.5, borderBottomColor: '#668899' }]}>
                                     {!item.isHidden ? item.alphabet : ' '}
                                 </Text>
                             )}
@@ -562,21 +571,41 @@ export default function PlayGame({ navigation }) {
         }
 
         if (type == 'restart') {
-            await subtract_life();
-            setrestart(true);
+            if (totalcoin > 0) {
+                subtract_life().then(()=>{
+                    navigation.replace('PlayGame');
+                }).catch(error => {
+                    navigation.replace('PlayGame');
+                    console.error("Error removing lifes");
+                });
+            } else { 
+                console.log('else part execute')
+                seterrorModal(false);
+                navigation.replace('Home');
+            }
+            // let a = await get_async_data('remaining_lifes');
+            // if (a > 0) {
+            //     settotalcoin( totalcoin - 1);
+            //     await subtract_life();
+            //     seterrorModal(false);
+            //     setmistake(0);
+            //     console.log(`AVAILABLE LIFES ${totalcoin}`)
+            //     // settotalcoin(prev => a);
+            // } else {
+            //     setlivemodel(true);
+            // }
         }
 
         if (type == 'resume') {
-            // SHOW AD AND MISTAKE KAM KRNI YAHAN PR
-            console.log('sub mistake');
-            setrewardad(true);
+            console.log('resume clicked');
+            setresumerewardad(true);
         }
     }
 
     return (
         <>
             <View style={styles.container}>
-                <PlayGameHeader mistake={mistake} round={round} setlivemodel={setlivemodel} livemodel={livemodel} />
+                <PlayGameHeader mistake={mistake} round={round} setlivemodel={setlivemodel} livemodel={livemodel} totalcoin={totalcoin} />
 
                 <View style={styles.puzzleArea}>
                     <PuzzleHeader setsettings={setsettings} setibutton={setibutton} />
@@ -613,21 +642,32 @@ export default function PlayGame({ navigation }) {
 
                 {/* {settings && <Settings setsettings={setsettings} />} */}
                 {isConnected ? (<View style={{ width: width }}>
-                    <BannerAd unitId={BANNER_AD} size={BannerAdSize.ANCHORED_ADAPTIVE_BANNER} onAdLoaded={() => console.log(true)}
+                    <BannerAd unitId={BANNER_AD} size={BannerAdSize.ANCHORED_ADAPTIVE_BANNER} onAdLoaded={() => console.log('ad loaded')}
                         onAdFailedToLoad={(error) => console.error('Ad failed to load:', error)} />
                 </View>) : (<View style={{ width: width }}></View>)}
             </View>
             {(hintAd || livemodel) && (<View style={styles.loaderContainer}><ActivityIndicator size={'large'} /></View>)}
-            {livemodel && (<LivesModel setlivemodel={setlivemodel} setrewardad={setearncoin} />)}
-            {earncoin && (<RewardedAd adId={COIN_REWARD} setrewardad={setearncoin} adPurpose={'onlyadLive'} setlivemodel={setlivemodel} />)}
+            {livemodel && (<LivesModel setearncoin={setearncoin} setlivemodel={setlivemodel} />)}
+
+
+            {/* {earncoin && (<RewardedAd adId={COIN_REWARD} setrewardad={setearncoin} adPurpose={'onlyadLive'} setlivemodel={setlivemodel} />)} */}
+            {earncoin && (<CoinReward setlivemodel={setlivemodel} setearncoin={setearncoin} settotalcoin={settotalcoin} />)}
+
             {errorModal && <ErrorModal start_game={start_game} />}
-            {rewardad && (<RewardedAd adId={RESUME_REWARD} setrewardad={setrewardad} seterrorModal={seterrorModal} mistake={mistake} setmistake={setmistake} adPurpose={'resume_game'} />)}
+            {resumerewardad && (<ResumeReward seterrorModal={seterrorModal} setmistake={setmistake} setresumerewardad={setresumerewardad} />)}
+            {/* {rewardad && (<RewardedAd adId={RESUME_REWARD} setrewardad={setrewardad} seterrorModal={seterrorModal} mistake={mistake} setmistake={setmistake} adPurpose={'resume_game'} />)} */}
+            
+            
             {hintAd && <HintRewardedAd adId={HINT_REWARD} adPurpose={'hint_ad'} sethintAd={sethintAd} setavailableHints={setavailableHints} />}
-            {restart && (<RewardedAd adId={RESUME_REWARD} setrestart={setrestart} seterrorModal={seterrorModal} mistake={mistake} setmistake={setmistake} adPurpose={'restart_game'} />)}
+            {/* {restart && (<RewardedAd adId={RESUME_REWARD} setrestart={setrestart} seterrorModal={seterrorModal} mistake={mistake} setmistake={setmistake} setlivemodel={setlivemodel} adPurpose={'restart_game'} />)} */}
+
+
+
+
+
 
             {/* {settings && <Settings setsettings={setsettings} />} */}
             {settings && (<CommigSoon setclose={setsettings} />)}
-
             {ibutton && <Ibutton setibutton={setibutton} />}
         </>
     );
@@ -636,8 +676,8 @@ export default function PlayGame({ navigation }) {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-      //  backgroundColor: '#f6e3dd'
-         backgroundColor: '#d1dce0'
+        //  backgroundColor: '#f6e3dd'
+        backgroundColor: '#d1dce0'
     },
     loaderContainer: {
         width: width,

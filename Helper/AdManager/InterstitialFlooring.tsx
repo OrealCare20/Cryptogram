@@ -16,11 +16,6 @@ export default function InterstitialFlooring(props: any) {
   }, [load]);
 
   useEffect(() => {
-    console.log('Interstitial Ad error', error);
-    // load();
-  }, [error]);
-
-  useEffect(() => {
     (async () => {
       if (error) {
         console.log('Intertitial Ad error', error);

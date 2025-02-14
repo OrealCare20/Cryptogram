@@ -1,5 +1,5 @@
 import { View, Text, StyleSheet, Dimensions, Image, ImageBackground, TouchableOpacity, SafeAreaView } from 'react-native';
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import OutlinedText from '@kdn0325/react-native-outlined-text';
 import Statistics from '../components/Statistics';
 import Subscription from '../components/Subscription';
@@ -10,6 +10,8 @@ import RewardedAd from '../Helper/AdManager/RewardedAd';
 import LivesModel from '../components/LivesModel';
 import CommigSoon from '../components/CommingSoon';
 import SystemNavigationBar from 'react-native-system-navigation-bar';
+import { useFocusEffect } from '@react-navigation/native';
+import CoinReward from '../Helper/AdManager/CoinReward';
 
 
 const { width, height } = Dimensions.get('screen');
@@ -44,36 +46,39 @@ const Home = ({ navigation }: { navigation: any }) => {
     const [shop, setshop] = useState(false);
     const [completedpercent, setcompletedpercent] = useState(0);
     const [livemodel, setlivemodel] = useState(false);
-    const [rewardad, setrewardad] = useState(false);
-    const [lives, setlives] = useState('Full');
-    const [data, setdata] = useState({ first_try_win: null, letter_solved: null, word_solved: null });
+    const [earncoin, setearncoin] = useState(false);
+    const [totalcoin, settotalcoin] = useState('Full');
+    const [data, setdata] = useState({ first_try_win: null, letter_solved: null, word_solved: null,days_completed: [], level_completed: 0, level_durations: "00:00:00" });
 
     SystemNavigationBar.immersive();
 
+    useFocusEffect(
+        useCallback(() => {
+            console.log('HOME SCREEN FOCUSED');
+            (async () => {
+                let stats_data = await get_all_stats_data();
+                // console.log(stats_data);
+                if (stats_data) {
+                    setdata(stats_data);
+                }
+                let round = await get_async_data('round');
+                // console.log(round);
+                let current_live = await get_async_data('remaining_lifes');
+                if (round == null || round == undefined) {
+                    await set_async_data('round', 'round_1');
+                    setlevelcompleted('1');
+                } else {
+                    let curr_lvl = parseInt(round.split('_')[1]) - 1;
+                    let compl_percnt = curr_lvl / 15;
+                    setlevelcompleted(round);
+                    setcompletedpercent(compl_percnt);
+                }
 
-    useEffect(() => {
-        (async () => {
-            let stats_data = await get_all_stats_data();
-            if (stats_data) {
-                setdata(stats_data);
-            }
-            let round = await get_async_data('round');
-            // console.log(round);
-            let current_live = await get_async_data('remaining_lifes');
-            if (round == null || round == undefined) {
-                await set_async_data('round', 'round_1');
-                setlevelcompleted('1');
-            } else {
-                let curr_lvl = parseInt(round.split('_')[1]) - 1;
-                let compl_percnt = curr_lvl / 15;
-                setlevelcompleted(round);
-                setcompletedpercent(compl_percnt);
-            }
+                if (current_live >= 5) { settotalcoin('Full') } else { settotalcoin(current_live) }
 
-            if (current_live >= 5) { setlives('Full') } else { setlives(current_live) }
-
-        })()
-    }, [levelcompleted]);
+            })()
+        }, [levelcompleted])
+    );
 
     const startGame = async () => {
         // if user have current lives > 1 then navigate else show Ad and then navigate
@@ -84,14 +89,23 @@ const Home = ({ navigation }: { navigation: any }) => {
             console.log('showing popup bcuz current_live is 0');
             setlivemodel(true);
         } else {
-            if(app_tour == null) {
+            if (app_tour == null) {
                 navigation.navigate('AppTour');
-            } else{
+            } else {
+                // navigation.navigate('AppTour');
                 navigation.navigate('PlayGame');
                 // navigation.navigate('TestScreen');
             }
         }
     }
+
+    const add_lives = () => {
+        if (totalcoin == 'Full') {
+            console.log('lives already full')
+        } else {
+            setlivemodel(true)
+        }
+    };
 
     return (
         <>
@@ -99,9 +113,9 @@ const Home = ({ navigation }: { navigation: any }) => {
                 <View style={{ width: '97%', flexDirection: 'row', alignItems: 'center', alignSelf: 'flex-end', top: '5%' }}>
                     <Image style={style.headerBadgeIcon} source={require('../assets/images/OBJECTS.png')} />
                     <View style={style.headerBadge}>
-                        <Text style={style.headerText}>{lives}</Text>
+                        <Text style={style.headerText}>{totalcoin}</Text>
                     </View>
-                    <TouchableOpacity onPress={() => setlivemodel(true)}>
+                    <TouchableOpacity onPress={add_lives}>
                         <Image style={{ width: 30, height: 30, marginLeft: 4 }} source={require('../assets/images/plus.png')} />
                     </TouchableOpacity>
                 </View>
@@ -127,7 +141,7 @@ const Home = ({ navigation }: { navigation: any }) => {
                             customStyle={{ color: '#A26361', textShadowColor: '#19E6E1', textShadowRadius: 1, top: -5, marginBottom: 7 }}
                         />
 
-                        <Text style={{ fontSize: 17, top: 10, textAlign: 'center', fontFamily: "Inter_24pt-SemiBold", fontWeight: '700', color:'#91403D' }}>Complete 16 level to Unlock</Text>
+                        <Text style={{ fontSize: 17, top: 10, textAlign: 'center', fontFamily: "Inter_24pt-SemiBold", fontWeight: '700', color: '#91403D' }}>Complete 16 level to Unlock</Text>
 
                         <View style={{ flexDirection: 'row', alignItems: 'center', top: 30 }}>
                             <Progress.Bar progress={completedpercent} width={170} height={11} color='#FF9602' unfilledColor='#E9E3DC' borderWidth={0} borderRadius={7} />
@@ -138,7 +152,7 @@ const Home = ({ navigation }: { navigation: any }) => {
 
                 <TouchableOpacity onPress={startGame}>
                     <Image style={[style.startButton, { marginTop: '50%' }]} source={require('../assets/images/start.png')} />
-                   
+
                 </TouchableOpacity>
 
 
@@ -150,12 +164,13 @@ const Home = ({ navigation }: { navigation: any }) => {
                 />
             </SafeAreaView>
 
-            
             {shop && (<CommigSoon setclose={setshop} />)}
-            {showstats && (<Statistics setshowstats={setshowstats} levelcompleted={levelcompleted} data={data}/>)}
+            {showstats && (<Statistics setshowstats={setshowstats} levelcompleted={levelcompleted} data={data} />)}
             {/* {shop && (<Subscription setshop={setshop} />)} */}
-            {livemodel && (<LivesModel setlivemodel={setlivemodel} setrewardad={setrewardad} />)}
-            {rewardad && (<RewardedAd adId={COIN_REWARD} setrewardad={setrewardad} adPurpose={'adLive'} navigation={navigation} setlivemodel={setlivemodel} />)}
+
+
+            {livemodel && (<LivesModel setearncoin={setearncoin} setlivemodel={setlivemodel} />)}
+            {earncoin && (<CoinReward setlivemodel={setlivemodel} setearncoin={setearncoin} settotalcoin={settotalcoin} />)}
         </>
 
     )
