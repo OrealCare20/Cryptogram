@@ -1,6 +1,7 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 // import Sound from 'react-native-sound';
 import moment from 'moment';
+import { puzzleData } from "./dataOriginal";
 
 
 //  FIREBASE CREDENTIALS
@@ -12,7 +13,7 @@ export const firebaseConfig = {
     messagingSenderId: "811440145032",
     appId: "1:811440145032:android:d1faf4daeb5b6a38e8553d",
     measurementId: ""
-  };
+};
 
 
 // TEST AD ID
@@ -20,7 +21,8 @@ export const firebaseConfig = {
 // export const COIN_REWARD = 'ca-app-pub-3940256099942544/5354046379';
 // export const HINT_REWARD = 'ca-app-pub-3940256099942544/5354046379';
 // export const RESUME_REWARD = 'ca-app-pub-3940256099942544/5224354917';
-// LIVE AD ID'S
+
+// // LIVE AD ID'S
 export const BANNER_AD = 'ca-app-pub-3781511156022357/9088003632';
 export const COIN_REWARD = 'ca-app-pub-3781511156022357/5648587543';
 export const HINT_REWARD = 'ca-app-pub-3781511156022357/4746569410';
@@ -110,7 +112,7 @@ export const first_try_win = async () => {
 }
 
 export const get_all_stats_data = async () => {
-    let data = { first_try_win: 0, letter_solved: 0, word_solved: 0, level_completed: 0, level_durations: null, days_completed: [] };
+    let data = { first_try_win: 0, letter_solved: 0, word_solved: 0, level_completed: 0, level_durations: ["00:00:00"], days_completed: [] };
 
     let first_try_win = await get_async_data('first_try_win');
     let letter_solved = await get_async_data('letter_solved');
@@ -128,15 +130,29 @@ export const get_all_stats_data = async () => {
 }
 
 export const letter_solved = async () => {
-    let data = await get_async_data('letter_solved');
-    if (data != null) {
-        data = data + 1;
-        console.log('TOTAL LETTER SOLVED', data);
-        await set_async_data('letter_solved', data);
+    let prevLetterSolved = await get_async_data('letter_solved');
+    let totalLetterSolved = 0;
+
+    if(prevLetterSolved == null || prevLetterSolved == undefined) {
+        let round = await get_async_data('round')
+        let completed_round =  round.split('_')[1] - 1
+    
+        let recentRoundLetterSolved =  puzzleData[`round_${completed_round}`].filter(item => item.isHidden).length;
+        await set_async_data('letter_solved', recentRoundLetterSolved);
+        totalLetterSolved = recentRoundLetterSolved;
     } else {
-        await set_async_data('letter_solved', 1);
+        let round = await get_async_data('round')
+        let completed_round =  round.split('_')[1] - 1
+    
+        let recentRoundLetterSolved =  puzzleData[`round_${completed_round}`].filter(item => item.isHidden).length;
+        await set_async_data('letter_solved', prevLetterSolved + recentRoundLetterSolved);
+        totalLetterSolved = prevLetterSolved + recentRoundLetterSolved;
     }
+
+    return totalLetterSolved;
 }
+
+
 
 export const time = async () => {
     const currentTime = moment();
@@ -264,11 +280,15 @@ const timeToSeconds = (time) => {
 };
 
 export const get_best_time = (timeArray) => {
-    if (!Array.isArray(timeArray) || timeArray.length === 0) return null;
-
-    return timeArray.reduce((minTime, currentTime) => {
-        return timeToSeconds(currentTime) < timeToSeconds(minTime) ? currentTime : minTime;
-    });
+    if (timeArray != null) {
+        let time = timeArray.split(',');
+        time = JSON.parse(time);
+        if (!Array.isArray(time) || time.length === 0) return null;
+        return time.reduce((minTime, currentTime) => {
+            return timeToSeconds(currentTime) < timeToSeconds(minTime) ? currentTime : minTime;
+        });
+    }
+    return "00:00:00";
 };
 
 // Helper function to convert total seconds back to HH:MM:SS
@@ -282,17 +302,22 @@ const secondsToTime = (totalSeconds) => {
 };
 
 // Function to calculate the average duration
-export const get_average_time = async (timeArray) => {
-    if (!Array.isArray(timeArray) || timeArray.length === 0) return null;
+export const get_average_time = (timeArray) => {
+    if (timeArray != null) {
+        let time = timeArray.split(',');
+        time = JSON.parse(time);
+        if (!Array.isArray(time) || time.length === 0) return null;
 
-    // Convert all times to total seconds and compute the sum
-    let totalSeconds = timeArray.reduce((sum, time) => sum + timeToSeconds(time), 0);
+        // Convert all times to total seconds and compute the sum
+        let totalSeconds = time.reduce((sum, time) => sum + timeToSeconds(time), 0);
 
-    // Calculate the average in seconds
-    let avgSeconds = Math.floor(totalSeconds / timeArray.length);
+        // Calculate the average in seconds
+        let avgSeconds = Math.floor(totalSeconds / time.length);
 
-    // Convert the result back to HH:MM:SS format
-    return secondsToTime(avgSeconds);
+        // Convert the result back to HH:MM:SS format
+        return secondsToTime(avgSeconds);
+    }
+    return "00:00:00"
 };
 
 // export const month_completed = async () => {

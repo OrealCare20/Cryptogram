@@ -17,11 +17,9 @@ import AlphabetKeyboard from '../components/AlphabetKeyboard';
 import { puzzleData } from '../Helper/dataOriginal';
 import PlayGameHeader from '../components/PlayGameHeader';
 import ErrorModal from '../components/ErrorModal';
-import { get_async_data, get_total_time, incrementValue, options, subtract_life, set_async_data, concatenateAlphabets, letter_solved, first_try_win, word_solved, getUnusedVisibleLetters, getRepeatedHiddenAlphabets, BANNER_AD, COIN_REWARD, RESUME_REWARD, HINT_REWARD, add_life } from '../Helper/AppHelper';
+import { get_async_data, incrementValue, options, subtract_life, set_async_data, concatenateAlphabets, letter_solved, first_try_win, word_solved, getUnusedVisibleLetters, getRepeatedHiddenAlphabets, BANNER_AD, HINT_REWARD } from '../Helper/AppHelper';
 import PuzzleHeader from '../components/PuzzleHeader';
-import Settings from '../components/Settings';
 import moment from 'moment';
-import RewardedAd from '../Helper/AdManager/RewardedAd';
 import { BannerAd, BannerAdSize } from 'react-native-google-mobile-ads';
 import HintRewardedAd from '../Helper/AdManager/HintRewardedAd';
 import Ibutton from '../components/Ibuton';
@@ -206,71 +204,36 @@ export default function PlayGame({ navigation }) {
             if (letterpressed && correctletter) {
                 if (letterpressed === correctletter.alphabet) {
 
-                    await letter_solved();
                     let updatedData = phrase.map(item =>
                         item.id === focusId ? { ...item, isHidden: false, isKey: false } : item
                     );
-
+                    // await letter_solved();
                     let prev_id = correctletter.id - 1;
                     let next_id = correctletter.id + 1;
+
                     // Updating previous and next items only if needed
-
-
                     if (prev_id >= 0 && prev_id < phrase.length) {
                         const prevItem = phrase[prev_id];
-                        // console.log('PREV_ITEM', prevItem);
-
-                        // Handle `isDoubleLocked` for the previous item
                         if (prevItem.isDoubleLocked) {
                             updatedData = updatedData.map(item =>
-                                item.id === prev_id ? { ...item, isDoubleLocked: false } : item
+                                item.id === next_id ? { ...item, isDoubleLocked: false } : item
                             );
-                        }
-
-                        // Handle `isSingleLocked` for the previous item
-                        if (prevItem.isSingleLocked && !prevItem.isDoubleLocked) {
+                        } else if (prevItem.isSingleLocked) {
                             updatedData = updatedData.map(item =>
                                 item.id === prev_id ? { ...item, isSingleLocked: false } : item
                             );
                         }
                     }
 
-                    if (next_id >= 0 && next_id < phrase.length) {
+                    if (next_id < phrase.length) {
                         const nextItem = phrase[next_id];
-                        // console.log('NEXT_ITEM', nextItem);
-
-                        // Handle `isDoubleLocked` for the next item
                         if (nextItem.isDoubleLocked) {
                             updatedData = updatedData.map(item =>
                                 item.id === next_id ? { ...item, isDoubleLocked: false } : item
                             );
-                        }
-
-                        // Handle `isSingleLocked` for the next item
-                        if (nextItem.isSingleLocked && !nextItem.isDoubleLocked) {
+                        } else if (nextItem.isSingleLocked) {
                             updatedData = updatedData.map(item =>
                                 item.id === next_id ? { ...item, isSingleLocked: false } : item
-                            );
-                        }
-                    }
-
-                    // Check if both previous and next items need to reset
-                    if (
-                        prev_id >= 0 &&
-                        next_id >= 0 &&
-                        prev_id < phrase.length &&
-                        next_id < phrase.length
-                    ) {
-                        const prevItem = phrase[prev_id];
-                        const nextItem = phrase[next_id];
-
-                        if (prevItem.isDoubleLocked && nextItem.isSingleLocked) {
-                            updatedData = updatedData.map(item =>
-                                item.id === prev_id
-                                    ? { ...item, isDoubleLocked: false }
-                                    : item.id === next_id
-                                        ? { ...item, isSingleLocked: false }
-                                        : item
                             );
                         }
                     }
@@ -308,43 +271,37 @@ export default function PlayGame({ navigation }) {
 
                     // Set the updated phrase
                     let remainingCount = updatedData.filter(item => item.isHidden).length;
-                    // console.log('REMAINING COUNT', remainingCount);
-
-
-                    // console.log(`UPDATED DATA : ${JSON.stringify(updatedData)}`);
                     setPhrase(updatedData);
                     seteletterOccur(occurCount);
-
                     // Reset pressed letter and focus
                     setletterpressed(null);
                     setfocusId(null);
                     setcorrectletter(null);
                     filterKeyboardKeys();
                     changeIndex('next');
-                    // console.log(`remainingCount : ${remainingCount}`);
+
                     if (remainingCount == 0) {
                         if (firsttry) {
                             await first_try_win();
                         }
-                        // console.log(`puzzle complete next round: round_${parseInt(round.split('_')[1]) + 1}`);
+                        console.log(`puzzle complete next round: round_${parseInt(round.split('_')[1]) + 1}`);
                         await set_async_data('round', `round_${parseInt(round.split('_')[1]) + 1}`);
+                        navigation.navigate('Home');
                         let string = concatenateAlphabets(phrase);
                         // await get_total_time();
                         let total_words = string.split(' ').length;
-                        // console.log('TOTAL WORDS', total_words);
+                        console.log('TOTAL WORDS', total_words);
                         await word_solved(total_words);
-                        // console.log(total_words);
-                        // console.log(`NOW START NAVIGATING`);
-                        navigation.replace('ResultScreen', { quote: string });
+                        navigation.navigate('ResultScreen', { quote: string });
                     }
                 } else {
                     setfirsttry(false);
                     // Handle mistake case
                     if (mistake >= 2 && !errorModal) {
-                        setmistake(mistake + 1);
-                        seterrorModal(true);
+                        setmistake(prevCount => prevCount + 1);
+                        seterrorModal(prevItem => !prevItem);
                     } else {
-                        setmistake(mistake + 1);
+                        setmistake(prevCount => prevCount + 1);
                         trigger("notificationError", options);
                         setletterpressed(null);
                     }
@@ -352,7 +309,8 @@ export default function PlayGame({ navigation }) {
             }
         };
         handleLetterPress();
-    }, [letterpressed, phrase, correctletter, focusId, rows, round]);
+    }, [letterpressed, phrase, correctletter, focusId, rows, mistake, round]);
+
 
     useEffect(() => {
         // console.log(`useefff tot coin ${totalcoin}`)
@@ -465,7 +423,7 @@ export default function PlayGame({ navigation }) {
                 await set_async_data('hints', hints - 1);
                 setavailableHints(availableHints - 1);
 
-                let remainingCount = phrase.filter(item => item.isHidden).length;
+                let remainingCount = updatedData.filter(item => item.isHidden).length;
                 if (remainingCount == 0) {
                     let string = concatenateAlphabets(phrase);
                     await set_async_data('round', `round_${parseInt(round.split('_')[1]) + 1}`);
@@ -510,7 +468,7 @@ export default function PlayGame({ navigation }) {
                 if (item.number == -1) {
                     letterElement = (
                         <View style={[styles.wordContainer]} key={`letter-${index}`}>
-                            <Text style={[getLetterStyle(item), { alignSelf: 'center' }]}>
+                            <Text style={[getLetterStyle(item), { alignSelf: 'center', borderBottomWidth: 1.5, borderBottomColor: '#668899' }]}>
                                 {item.alphabet}
                             </Text>
                             <Text style={{ fontSize: 13, textAlign: 'center', marginTop: 5, color: '#482A00' }}></Text>
@@ -518,8 +476,8 @@ export default function PlayGame({ navigation }) {
                     );
                 } else if (item.number == -3) {
                     letterElement = (
-                        <View style={[{ width: 20, height: 55, justifyContent: 'center' }, hintStyle]} key={`letter-${index}`}>
-                            <Text style={[getLetterStyle(item), { alignSelf: 'center', borderBottomWidth: 1.5, borderBottomColor: '#668899' }]}>
+                        <View style={[{ width: 20, height: 50, justifyContent: 'center' }, hintStyle]} key={`letter-${index}`}>
+                            <Text style={[getLetterStyle(item), { alignSelf: 'center', top: 2 }]}>
                                 {item.alphabet}
                             </Text>
                             <Text style={{ fontSize: 13, textAlign: 'center', marginTop: 5, color: '#482A00' }}></Text>
@@ -572,13 +530,13 @@ export default function PlayGame({ navigation }) {
 
         if (type == 'restart') {
             if (totalcoin > 0) {
-                subtract_life().then(()=>{
+                subtract_life().then(() => {
                     navigation.replace('PlayGame');
                 }).catch(error => {
                     navigation.replace('PlayGame');
                     console.error("Error removing lifes");
                 });
-            } else { 
+            } else {
                 console.log('else part execute')
                 seterrorModal(false);
                 navigation.replace('Home');
@@ -599,6 +557,7 @@ export default function PlayGame({ navigation }) {
         if (type == 'resume') {
             console.log('resume clicked');
             setresumerewardad(true);
+            setmistake(mistake - 1);
         }
     }
 
@@ -656,8 +615,8 @@ export default function PlayGame({ navigation }) {
             {errorModal && <ErrorModal start_game={start_game} />}
             {resumerewardad && (<ResumeReward seterrorModal={seterrorModal} setmistake={setmistake} setresumerewardad={setresumerewardad} />)}
             {/* {rewardad && (<RewardedAd adId={RESUME_REWARD} setrewardad={setrewardad} seterrorModal={seterrorModal} mistake={mistake} setmistake={setmistake} adPurpose={'resume_game'} />)} */}
-            
-            
+
+
             {hintAd && <HintRewardedAd adId={HINT_REWARD} adPurpose={'hint_ad'} sethintAd={sethintAd} setavailableHints={setavailableHints} />}
             {/* {restart && (<RewardedAd adId={RESUME_REWARD} setrestart={setrestart} seterrorModal={seterrorModal} mistake={mistake} setmistake={setmistake} setlivemodel={setlivemodel} adPurpose={'restart_game'} />)} */}
 

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { View, StyleSheet, Text, Image, Dimensions, ScrollView, ImageBackground, TouchableOpacity, Linking } from 'react-native';
-import { get_async_data, set_async_data } from "../Helper/AppHelper";
+import { get_async_data, letter_solved, set_async_data } from "../Helper/AppHelper";
 import moment from "moment";
 import analytics from '@react-native-firebase/analytics';
 
@@ -35,46 +35,66 @@ export default function ResultScreen({ route, navigation }) {
 
     useEffect(() => {
         (async () => {
-            let startTime = await get_async_data('start_time');
             let lvl = await get_async_data('round');
             // let phrase = route.params.quote;
             setlevel(parseInt(lvl.split('_')[1]) - 1);
 
-            
+            // 1. Retrieve `startTime` from storage
+            let startTime = await get_async_data('start_time');
 
-            if (startTime != null || startTime != undefined) {
-                let currentTime = formatCurrentTime();
+            if (startTime) {
+                // 2. Calculate the current time and the duration since `startTime`
+                let currentTime = formatCurrentTime();         // e.g. "00:03:45"
                 let duration = getTimeDifference(currentTime, startTime);
 
+                // 3. Retrieve the stored durations (which should be a JSON string)
                 let level_duration = await get_async_data('level_duration');
-                if (level_duration != null && level_duration != undefined) {
-                    // Ensure level_duration is an array
-                    let newArray = Array.isArray(level_duration) ? [...level_duration, duration] : [duration];
-                    await set_async_data('level_duration', newArray);
-                } else {
-                    await set_async_data('level_duration', [duration]);
+
+                // We'll store durations in an array, so parse it if it exists
+                let durationsArray = [];
+                if (level_duration) {
+                    try {
+                        // Parse the existing JSON string
+                        durationsArray = JSON.parse(level_duration);
+                        // If for some reason it's not an array, reset to empty
+                        if (!Array.isArray(durationsArray)) {
+                            durationsArray = [];
+                        }
+                    } catch (err) {
+                        // If the stored value isn't valid JSON, reset to empty
+                        durationsArray = [];
+                    }
                 }
 
+                // 4. Add the new duration to the array
+                durationsArray.push(duration);
+
+                // 5. Store the updated array back as a JSON string
+                await set_async_data('level_duration', JSON.stringify(durationsArray));
+
+                // 6. Use `duration` as needed (update state, display, etc.)
                 settotalduration(duration);
+
             } else {
-                console.log('bc time ni set howa')
+                console.log('start_time is not set yet');
             }
 
+            await letter_solved();
             await analytics().logEvent('Result Screen');
         })()
     }, []);
 
-    useEffect(()=>{
-        if(level == 16) {
+    useEffect(() => {
+        if (level == 16) {
             setcongrat(true);
         }
-    },[level]);
+    }, [level]);
 
     const next = async () => {
         await set_async_data('start_time', null);
-        if(congrat) {
+        if (congrat) {
             navigation.navigate('Congratulation');
-        } else{
+        } else {
             navigation.navigate('Home');
         }
     }

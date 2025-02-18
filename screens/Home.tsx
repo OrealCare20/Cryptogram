@@ -3,8 +3,9 @@ import React, { useCallback, useEffect, useState } from 'react';
 import OutlinedText from '@kdn0325/react-native-outlined-text';
 import Statistics from '../components/Statistics';
 import Subscription from '../components/Subscription';
-import { get_async_data, add_life, remaining_lifes, set_async_data, subtract_life, get_all_stats_data, get_best_time, COIN_REWARD } from '../Helper/AppHelper';
+import { get_async_data, add_life, remaining_lifes, set_async_data, subtract_life, get_all_stats_data, get_best_time, COIN_REWARD, letter_solved } from '../Helper/AppHelper';
 import * as Progress from 'react-native-progress';
+import LottieView from 'lottie-react-native';
 import TabMenu from '../components/TabMenu';
 import RewardedAd from '../Helper/AdManager/RewardedAd';
 import LivesModel from '../components/LivesModel';
@@ -18,9 +19,6 @@ const { width, height } = Dimensions.get('screen');
 
 const CALENDER_WIDTH = width / 1.2;
 const CALENDER_RATIO = CALENDER_WIDTH / 1216;
-
-const BRAIN_WIDTH = width / 2.1;
-const BRAIN_RATIO = BRAIN_WIDTH / 663;
 
 const START_BUTTON = width / 2 + 20;
 const START_BUTTON_RATIO = START_BUTTON / 816;
@@ -47,8 +45,8 @@ const Home = ({ navigation }: { navigation: any }) => {
     const [completedpercent, setcompletedpercent] = useState(0);
     const [livemodel, setlivemodel] = useState(false);
     const [earncoin, setearncoin] = useState(false);
-    const [totalcoin, settotalcoin] = useState('Full');
-    const [data, setdata] = useState({ first_try_win: null, letter_solved: null, word_solved: null,days_completed: [], level_completed: 0, level_durations: "00:00:00" });
+    const [totalcoin, settotalcoin] = useState(5);
+    const [data, setdata] = useState({ first_try_win: null, letter_solved: null, word_solved: null, days_completed: [], level_completed: 0 });
 
     SystemNavigationBar.immersive();
 
@@ -57,7 +55,7 @@ const Home = ({ navigation }: { navigation: any }) => {
             console.log('HOME SCREEN FOCUSED');
             (async () => {
                 let stats_data = await get_all_stats_data();
-                // console.log(stats_data);
+                // console.log(stats_data)
                 if (stats_data) {
                     setdata(stats_data);
                 }
@@ -69,12 +67,12 @@ const Home = ({ navigation }: { navigation: any }) => {
                     setlevelcompleted('1');
                 } else {
                     let curr_lvl = parseInt(round.split('_')[1]) - 1;
-                    let compl_percnt = curr_lvl / 15;
+                    let compl_percnt = curr_lvl / 16;
                     setlevelcompleted(round);
                     setcompletedpercent(compl_percnt);
                 }
-
-                if (current_live >= 5) { settotalcoin('Full') } else { settotalcoin(current_live) }
+                settotalcoin(current_live)
+                // if (current_live >= 5) { settotalcoin('Full') } else {  }
 
             })()
         }, [levelcompleted])
@@ -100,11 +98,11 @@ const Home = ({ navigation }: { navigation: any }) => {
     }
 
     const add_lives = () => {
-        if (totalcoin == 'Full') {
-            console.log('lives already full')
-        } else {
+        // if (totalcoin == 'Full') {
+        //     console.log('lives already full')
+        // } else {
             setlivemodel(true)
-        }
+        // }
     };
 
     return (
@@ -121,7 +119,6 @@ const Home = ({ navigation }: { navigation: any }) => {
                 </View>
 
                 <View style={style.mainContainer}>
-
                     <ImageBackground style={style.calender} source={require('../assets/images/cal.png')}>
                         <OutlinedText
                             text={'Daily Challenge'}
@@ -149,10 +146,10 @@ const Home = ({ navigation }: { navigation: any }) => {
                         </View>
                     </ImageBackground>
                 </View>
+                    <LottieView source={require('../assets/images/brain-lottie.json')} autoPlay loop style={style.lottie}/>
 
                 <TouchableOpacity onPress={startGame}>
-                    <Image style={[style.startButton, { marginTop: '50%' }]} source={require('../assets/images/start.png')} />
-
+                    <Image style={[style.startButton, { marginTop: '15%' }]} source={require('../assets/images/start.png')} />
                 </TouchableOpacity>
 
 
@@ -242,12 +239,6 @@ const style = StyleSheet.create({
         height: 428 * COIN_BANK_RATIO,
         resizeMode: 'contain',
     },
-    brain: {
-        width: BRAIN_WIDTH,
-        height: 477 * BRAIN_RATIO,
-        alignSelf: 'center',
-        marginTop: 60
-    },
     startButton: {
         width: START_BUTTON,
         height: 304 * START_BUTTON_RATIO,
@@ -283,5 +274,11 @@ const style = StyleSheet.create({
     stroke: {
         color: 'black', // Stroke color
     },
+    lottie: {
+        width: 200,
+        height: 200,
+        alignSelf: 'center',
+        marginTop: 20
+    }
 });
 export default Home;

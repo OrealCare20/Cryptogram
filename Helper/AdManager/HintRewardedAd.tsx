@@ -38,6 +38,7 @@ export default function HintRewardedAd(props: any) {
     })()
   }, [error]);
 
+  // ORIGINAL CLOSED AD USEEFFECT
   useEffect(() => {
     (async () => {
       if (isClosed) {

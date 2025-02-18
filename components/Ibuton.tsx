@@ -14,7 +14,7 @@ const Ibutton = ({ setibutton }: { setibutton: (value: boolean) => void }) => {
     ];
 
     const close = () => {
-        if(currentIndex == 2) {
+        if (currentIndex == 2) {
             setibutton(false);
         }
     }
@@ -22,6 +22,9 @@ const Ibutton = ({ setibutton }: { setibutton: (value: boolean) => void }) => {
     return (
         <View style={style.container}>
             <View style={style.mainArea}>
+                <TouchableOpacity style={{ position: 'absolute', top: 0, zIndex: 4, right: 0 }} onPress={() => setibutton(false)}>
+                    <Image source={require('../assets/images/close.png')} style={style.closeIcon} />
+                </TouchableOpacity>
                 <Carousel
                     loop
                     width={width * 0.8} // ✅ Adjust width to fit inside `mainArea`
@@ -34,11 +37,14 @@ const Ibutton = ({ setibutton }: { setibutton: (value: boolean) => void }) => {
                     )}
                     style={style.carousel} // ✅ Ensures it stays inside `mainArea`
                 />
-
-                <TouchableOpacity onPress={close} style={style.button}>
-                    <Text style={style.buttonText}>{currentIndex == 2 ? 'Close' : 'Next'}</Text>
-                </TouchableOpacity>
+                {currentIndex! >= 2 ? (
+                    <TouchableOpacity onPress={close} style={[style.button, { top: 10 }]}>
+                        <Text style={style.buttonText}>{currentIndex == 2 ? 'Close' : 'Next'}</Text>
+                    </TouchableOpacity>
+                ) : (<View style={[style.button, { backgroundColor: 'transparent' }]}></View>)}
             </View>
+
+
         </View>
     );
 };
@@ -84,6 +90,13 @@ const style = StyleSheet.create({
         fontWeight: 'bold',
         color: '#fff',
         textAlign: 'center'
+    },
+    closeIcon: {
+        width: 40,
+        height: 40,
+        position: 'absolute',
+        right: -10,
+        top: -20
     },
 });
 

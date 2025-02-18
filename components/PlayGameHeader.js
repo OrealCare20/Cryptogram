@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, { useEffect, useState } from 'react';
 import {
     View,
     Text,
@@ -11,16 +11,22 @@ import { get_async_data } from '../Helper/AppHelper';
 export default function PlayGameHeader({ mistake, round, setlivemodel, livemodel, totalcoin }) {
     // Limit mistake count to a maximum of 3
     // const [lives, setuseState] = useState(5);
-    
-    useEffect(()=>{
-        (async ()=> {
-            if (mistake > 3) {
-                mistake = 3;
-            }
+
+    useEffect(() => {
+        (async () => {
+            // if (mistake > 3) {
+            //     mistake = 3;
+            // }
             // let a = await get_async_data('remaining_lifes');
             // setuseState(a);
         })();
     }, [livemodel]);
+
+    function clamp(value, min, max) {
+        return Math.min(Math.max(value, min), max);
+    }
+
+    const safeMistake = clamp(mistake, 0, 3);
 
     return (
         <View style={styles.header}>
@@ -28,9 +34,9 @@ export default function PlayGameHeader({ mistake, round, setlivemodel, livemodel
                 <View style={{ width: '100%', flexDirection: 'row', alignItems: 'center' }}>
                     <Image style={styles.headerBadgeIcon} source={require('../assets/images/OBJECTS.png')} />
                     <View style={styles.headerBadge}>
-                        <Text style={[styles.headerText, {color: '#BE8763', fontSize: 15, fontWeight: '800'}]}>{totalcoin}</Text>
+                        <Text style={[styles.headerText, { color: '#BE8763', fontSize: 15, fontWeight: '800' }]}>{totalcoin}</Text>
                     </View>
-                    <TouchableOpacity style={{padding: 5}} onPress={()=>setlivemodel(true)}>
+                    <TouchableOpacity style={{ padding: 5 }} onPress={() => setlivemodel(true)}>
                         <Image style={{ width: 18.4, height: 18.9, marginLeft: 0 }} source={require('../assets/images/plus.png')} />
                     </TouchableOpacity>
                 </View>
@@ -46,16 +52,16 @@ export default function PlayGameHeader({ mistake, round, setlivemodel, livemodel
                         marginTop: 5
                     }}
                 >
-                    {mistake > 0 ? (
+                    {safeMistake > 0 ? (
                         <>
-                            {Array(mistake).fill().map((_, index) => (
+                            {Array(safeMistake).fill().map((_, index) => (
                                 <Image
                                     key={`miss-${index}`}
                                     style={{ width: 13.54, height: 13.54 }}
                                     source={require('../assets/images/icons/miss-hint.png')}
                                 />
                             ))}
-                            {Array(3 - mistake).fill().map((_, index) => (
+                            {Array(3 - safeMistake).fill().map((_, index) => (
                                 <Image
                                     key={`heart-${index}`}
                                     style={{ width: 14, height: 11.67 }}

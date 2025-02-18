@@ -9,7 +9,6 @@ const OPT_RATIO = OPT_WIDTH / 1312;
 
 export default function Statistics({ setshowstats, levelcompleted, data }) {
 
-   
     return (
         <View style={style.container}>
             <View style={style.mainContainer} showsVerticalScrollIndicator={false} scrollsToTop>
@@ -93,7 +92,7 @@ export default function Statistics({ setshowstats, levelcompleted, data }) {
                                     <Text style={[style.optText, { fontSize: 15, marginLeft: 8 }]}>Months Completed</Text>
                                 </View>
                                 <View style={{ padding: 5 }}>
-                                    <Text style={style.optText}>{data.days_completed!= null && data.days_completed > 28 ? 1: 0}</Text>
+                                    <Text style={style.optText}>{data.days_completed != null && data.days_completed > 28 ? 1 : 0}</Text>
                                 </View>
                             </ImageBackground>
 
@@ -103,7 +102,7 @@ export default function Statistics({ setshowstats, levelcompleted, data }) {
                                     <Text style={[style.optText, { fontSize: 15, marginLeft: 8 }]}>Best Time</Text>
                                 </View>
                                 <View style={{ padding: 5 }}>
-                                    <Text style={style.optText}>{data.level_durations != null ? get_best_time(data.level_durations): '00:00:00'}</Text>
+                                    <Text style={style.optText}>{data.level_durations != null ? get_best_time(data.level_durations) : '00:00:00'}</Text>
                                 </View>
                             </ImageBackground>
 
@@ -113,7 +112,7 @@ export default function Statistics({ setshowstats, levelcompleted, data }) {
                                     <Text style={[style.optText, { fontSize: 15, marginLeft: 8 }]}>Average Time</Text>
                                 </View>
                                 <View style={{ padding: 5 }}>
-                                    <Text style={style.optText}>{data.level_durations != null ? get_average_time(data.level_durations) : '00:00:00'}</Text>
+                                    <Text style={style.optText}>{ get_average_time(data.level_durations)}</Text>
                                 </View>
                             </ImageBackground>
                         </View>

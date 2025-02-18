@@ -606,8 +606,8 @@ let puzzleData = {
                 isKey: false,
                 isDoubleLocked: false
             }
-        ],
-    "round_3":  [
+    ],
+    "round_3": [
         {
             id: 0,
             alphabet: "Y",
@@ -881,7 +881,7 @@ let puzzleData = {
         {
             id: 30,
             alphabet: "I",
-            number:-3,
+            number: -3,
             isHidden: false,
             isSingleLocked: false,
             isKey: false,
@@ -1403,7 +1403,7 @@ let puzzleData = {
             isDoubleLocked: false
         }
     ],
-    "round_5":[
+    "round_5": [
         {
             id: 0,
             alphabet: "D",
@@ -1819,7 +1819,7 @@ let puzzleData = {
             isDoubleLocked: false
         }
     ],
-    "round_6":[
+    "round_6": [
         {
             id: 0,
             alphabet: "O",
@@ -2361,7 +2361,7 @@ let puzzleData = {
             isDoubleLocked: false
         }
     ],
-    "round_7":[
+    "round_7": [
         {
             id: 0,
             alphabet: "A",
@@ -3607,7 +3607,7 @@ let puzzleData = {
             isDoubleLocked: false
         }
     ],
-    "round_9":  [
+    "round_9": [
         {
             id: 0,
             alphabet: "B",
@@ -4419,7 +4419,7 @@ let puzzleData = {
             isDoubleLocked: false
         }
     ],
-    "round_10":[
+    "round_10": [
         {
             id: 0,
             alphabet: "R",
@@ -5799,11 +5799,10 @@ let puzzleData = {
             isKey: false,
             isDoubleLocked: false
         }
-         ],
-
+    ],
     "round_12": [
-        
-         {
+
+        {
             id: 0,
             alphabet: "Y",
             number: 36,
@@ -5878,7 +5877,7 @@ let puzzleData = {
         {
             id: 8,
             alphabet: "T",
-number: 49,
+            number: 49,
             isHidden: true,
             isSingleLocked: false,
             isKey: false,
@@ -6884,8 +6883,7 @@ number: 49,
             isDoubleLocked: false
         }
     ],
-    
-    "round_13":[
+    "round_13": [
         {
             id: 0,
             alphabet: "O",
@@ -7724,7 +7722,7 @@ number: 49,
             isDoubleLocked: false
         }
     ],
-    "round_14":[
+    "round_14": [
         {
             id: 0,
             alphabet: "T",
@@ -8772,7 +8770,7 @@ number: 49,
             isDoubleLocked: false
         }
     ],
-    "round_16":[
+    "round_16": [
         {
             id: 0,
             alphabet: "O",

@@ -24,13 +24,13 @@ export default function TabMenu({showstats, setshowstats, setshop, shop}) {
 
                 <TouchableOpacity onPress={()=>setshowstats(true)} style={[styles.touchable, {marginTop: 4}]}>
                     <Image style={[styles.icon]} source={require('../assets/images/icons/stats_unselected.png')}/>             
-                    <Text numberOfLines={1} style={styles.menuTitle}>Statistics</Text>
+                    <Text numberOfLines={1} style={styles.menuTitle}>Stats</Text>
                 </TouchableOpacity>
 
-                <TouchableOpacity style={styles.touchable}>
+                {/* <TouchableOpacity style={styles.touchable}>
                     <Image style={styles.icon} source={require('../assets/images/icons/collection_unselected.png')}/>
-                    <Text numberOfLines={1} style={styles.menuTitle}>Collection</Text>
-                </TouchableOpacity>
+                    <Text numberOfLines={1} style={styles.menuTitle}>Collects</Text>
+                </TouchableOpacity> */}
             </View>
         </View>
     )
@@ -40,7 +40,7 @@ const styles = StyleSheet.create({
         width: width,
         backgroundColor: '#fff',
         flexDirection: 'row',
-        justifyContent: 'space-between',
+        justifyContent: 'space-around',
         alignItems: 'center',
         alignSelf: 'center',
         paddingHorizontal: 25,

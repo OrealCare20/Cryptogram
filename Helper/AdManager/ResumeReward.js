@@ -1,6 +1,6 @@
 import { View, Text } from 'react-native';
 import React, { useEffect } from 'react';
-import { useInterstitialAd, useRewardedAd } from 'react-native-google-mobile-ads';
+import { useRewardedAd } from 'react-native-google-mobile-ads';
 import { RESUME_REWARD } from '../AppHelper';
 
 const ResumeReward = ({ seterrorModal, setmistake, setresumerewardad }) => {

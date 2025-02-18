@@ -8,7 +8,7 @@ import { StatusBar } from 'react-native';
 import SystemNavigationBar from 'react-native-system-navigation-bar';
 import analytics from '@react-native-firebase/analytics';
 import crashlytics from '@react-native-firebase/crashlytics';
-import { days_completed, set_async_data, remaining_lifes, generate_id, firebaseConfig } from './Helper/AppHelper';
+import { days_completed, set_async_data, remaining_lifes, firebaseConfig } from './Helper/AppHelper';
 enableFreeze(true);
 
 const App = () => {
@@ -21,8 +21,6 @@ const App = () => {
       crashlytics().setCrashlyticsCollectionEnabled(true)
       // crashlytics().crash()
       analytics().setAnalyticsCollectionEnabled(true);
-
-      await generate_id();
       await days_completed();
       await remaining_lifes();
       StatusBar.setHidden(true);

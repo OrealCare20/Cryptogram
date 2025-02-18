@@ -1,9 +1,10 @@
 import { View, Text } from 'react-native';
-import { useInterstitialAd, useRewardedAd } from 'react-native-google-mobile-ads';
+import { useRewardedAd } from 'react-native-google-mobile-ads';
 import React, { useEffect } from 'react';
 import { add_life, COIN_REWARD } from '../AppHelper';
 
 const CoinReward = ({ setlivemodel, setearncoin, settotalcoin }) => {
+
     const { isLoaded, isClosed, load, show, error, isEarnedReward } = useRewardedAd(
         COIN_REWARD,
         {
